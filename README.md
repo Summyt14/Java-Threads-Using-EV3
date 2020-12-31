@@ -11,6 +11,7 @@
 ...
 	
 ## Coisas a fazer
+* 🔳 Organizar classes e packages: existem classes repetidas nos ficheiros. O Cajó disse que queria tudo na default package? Ou nao tem mal de deixar as classes do buffer e das mensagens num package à parte?
 * ☑️ Desmartelar o codigo +/- , porque o controlo das threads dos comportamentos não era no cliente mas sim da gui.
 * 🔳 Implementar os semaforos no comportamento, no run do Comportamento deve-se tirar a espera ativa 🙃, e naqueles whiles de esperar pelo espaçador, e por um mecanismo tp semáforo, ou monitor.
 * 🔳 Fazer uma gui de comportamentos (para manipular os valores), para se poderem ajustar parâmetros tp margens de cagaço nos raios e etc pq há robots coxos *cof cof ev1*.
