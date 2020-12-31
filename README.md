@@ -71,3 +71,38 @@ Os comportamentos têm de ter em consideração que a **velocidade de movimento 
 
 A sincronização entre as diferentes tarefas utiliza os mecanismos de sincronização estudados
 nas aulas, que são os semáforos e os monitores.
+
+* [Voltar ao topo](#indice)
+
+## Enunciado 3
+
+**Objetivo:** Manipulação de ficheiros em JAVA utilizando InputStreams e OutputStreams
+numa aplicação multiprocesso. Utilização do robot como sistema alvo para a validação
+completa do trabalho.
+
+Desenvolva uma *thread* “**GravarFormas**” que é composta por uma GUI com as opções:
+* Gravar uma sequência de formas geométricas num ficheiro ou parar a gravação.
+* Reproduzir a sequência de formas geométricas gravada num determinado ficheiro.
+* Definir o nome do ficheiro.
+
+A opção 1 permite gravar ou parar a gravação num ficheiro de uma sequência de formas
+geométricas, para posterior reprodução. Uma sequência de formas geométricas é
+composta às formas geradas pelos comportamentos implementados na primeira parte do
+trabalho.
+
+A opção 2 permite a reprodução de uma sequência de formas geométricas gravadas num
+ficheiro. Durante uma reprodução não é permitido que os outros comportamentos enviem
+comandos para o robot.
+
+A opção 3 permite definir o nome do ficheiro para gravação ou reprodução.
+A implementação das três opções na GUI do “**GravarFormas**” é livre e deixada à
+criatividade de cada grupo.
+
+A implementação da *thread* “**GravarFormas**” obriga a que a manipulação de ficheiros
+utilize as classes do JAVA de InputStream e de OutputStream, de entre o conjunto de
+classes definidas nas folhas da disciplina.
+
+A validação final das várias partes do trabalho é sobre o Robot EV3, utilizando as
+bibliotecas JAVA disponibilizadas na página da disciplina no Moodle.
+
+* [Voltar ao topo](#indice)
