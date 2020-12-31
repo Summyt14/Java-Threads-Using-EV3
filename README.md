@@ -1,6 +1,6 @@
 # FSO
 
-[Word para o Relatório](http://www.blankwebsite.com/)
+[Word do Relatório](http://www.blankwebsite.com/)
 
 ## Indice
 * [Ideias](#ideias)
