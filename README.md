@@ -9,12 +9,12 @@
 ## Ideias
 ...
 	
-## Coisas para fazer
+## Coisas a fazer
 ...
 
 ## Enunciado 2
 
-Objetivos: Desenvolvimento de aplicações multitarefa em Java. Comunicação e
+*Objetivos:* Desenvolvimento de aplicações multitarefa em Java. Comunicação e
 sincronização entre tarefas Java. Modelo Produtor-Consumidor.
 Pretende-se o desenvolvimento de uma aplicação, escrita na linguagem Java, que permite o
 controlo automático de um robot desenhador no espaço bidimensional.
