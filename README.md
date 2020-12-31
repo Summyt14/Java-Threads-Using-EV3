@@ -5,6 +5,7 @@
 * [Ideias](#ideias)
 * [Coisas a fazer](#coisas-a-fazer)
 * [Enunciado 2](#enunciado-2)
+* [Enunciado 3](#enunciado-3)
 
 ## Ideias
 ...
@@ -72,7 +73,7 @@ Os comportamentos têm de ter em consideração que a **velocidade de movimento 
 A sincronização entre as diferentes tarefas utiliza os mecanismos de sincronização estudados
 nas aulas, que são os semáforos e os monitores.
 
-* [Voltar ao topo](#indice)
+* [Voltar ao topo](#fso)
 
 ## Enunciado 3
 
@@ -105,4 +106,4 @@ classes definidas nas folhas da disciplina.
 A validação final das várias partes do trabalho é sobre o Robot EV3, utilizando as
 bibliotecas JAVA disponibilizadas na página da disciplina no Moodle.
 
-* [Voltar ao topo](#indice)
+* [Voltar ao topo](#fso)
