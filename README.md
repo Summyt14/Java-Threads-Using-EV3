@@ -11,7 +11,10 @@
 ...
 	
 ## Coisas a fazer
-...
+* ☑️ Desmartelar o codigo +/- , porque o controlo das threads dos comportamentos não era no cliente mas sim da gui.
+* 🔳 Implementar os semaforos no comportamento, no run do Comportamento deve-se tirar a espera ativa 🙃, e naqueles whiles de esperar pelo espaçador, e por um mecanismo tp semáforo, ou monitor.
+* 🔳 Fazer uma gui de comportamentos (para manipular os valores), para se poderem ajustar parâmetros tp margens de cagaço nos raios e etc pq há robots coxos *cof cof ev1*.
+* ☑️ Ajeitar sleeps depois das curvas (quadrado), porque está a demorar mt tempo até fazer a reta seguinte.
 
 ## Enunciado 2
 
