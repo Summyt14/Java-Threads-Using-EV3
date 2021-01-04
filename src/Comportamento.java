@@ -7,15 +7,14 @@ public abstract class Comportamento extends Thread {
     private ClienteDoRobot clienteDoRobot;
     private Estado estado;
     private GUI gui;
-
-    private Semaphore smp;
+    private Semaphore smpEstado;
 
     public Comportamento(boolean isLadoEsq, ClienteDoRobot clienteDoRobot, GUI gui) {
         this.isLadoEsq = isLadoEsq;
         this.clienteDoRobot = clienteDoRobot;
         this.gui = gui;
         estado = Estado.PARADO;
-        smp = new Semaphore(1);
+        smpEstado = new Semaphore(0);
     }
 
     public boolean isLadoEsq() {
@@ -34,34 +33,29 @@ public abstract class Comportamento extends Thread {
         }
     }
 
-    public void setEstado(Estado estado) {
-        this.estado = estado;
+    public void ativar() {
+        smpEstado.release();
     }
 
-    public void setLadoEsq(boolean value) { this.isLadoEsq = value; }
+    public void setLadoEsq(boolean value) {
+        this.isLadoEsq = value;
+    }
 
     public abstract void desenho();
+
     public abstract int getDistancia();
 
-    // FIXME ESPETAR SEMAFOROS AQUI
     public void run() {
         for (; ; ) {
             try {
-            	Thread.sleep(1);
-                switch (estado) {
-                    case PARADO:
-                        break;
-                    case ATIVO:
-                        try {
-                            gui.getMutex().acquire();
-                            desenho();
-                            gui.acabeiDesenho();
-                            estado = Estado.PARADO;
-                            gui.getMutex().release();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        break;
+                smpEstado.acquire();
+                try {
+                    gui.getMutex().acquire();
+                    desenho();
+                    gui.acabeiDesenho();
+                    gui.getMutex().release();
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             } catch (Exception e) {
                 e.printStackTrace();

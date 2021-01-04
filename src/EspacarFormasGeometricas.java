@@ -21,10 +21,9 @@ public class EspacarFormasGeometricas extends Comportamento{
 
     public void desenho() {
         getCliente().espacar(distancia);
-        System.out.println("Vou espaçar " + distancia);
+        System.out.println("Vou espacar " + distancia);
         setEspera(distancia);
         getCliente().parar(false);
         setEspera(10);
-        gui.setAcabouEspacar(true);
     }
 }

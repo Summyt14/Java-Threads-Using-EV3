@@ -45,9 +45,9 @@ public class GUI extends JFrame {
 
     private boolean ladoEsq;
     private boolean acabouDesenho;
-    private boolean acabouEspacar = true;
     private int dist = 0;
     private Semaphore mutex;
+    private Semaphore esperaDesenho;
 
 
     public GUI() {
@@ -177,44 +177,47 @@ public class GUI extends JFrame {
         quadrado.start();
         circulo.start();
         espacamento.start();
+        esperaDesenho = new Semaphore(1);
     }
 
     public void adicionarQuadrado() {
         adicionarEspacamento();
-        while(!acabouEspacar) {
-            try {
-                Thread.sleep(1);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        try {
+            esperaDesenho.acquire();
+            quadrado.setLadoEsq(ladoEsq);
+            quadrado.ativar();
+            clienteDoRobot.setUltimoComportamento(quadrado);
+            acabouDesenho = false;
+            esperaDesenho.release();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        quadrado.setEstado(Estado.ATIVO);
-        quadrado.setLadoEsq(ladoEsq);
-        clienteDoRobot.setUltimoComportamento(quadrado);
-        acabouDesenho = false;
     }
 
     public void adicionarCirculo() {
         adicionarEspacamento();
-        while(!acabouEspacar) {
-            try {
-                Thread.sleep(1);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        try {
+            esperaDesenho.acquire();
+            circulo.setLadoEsq(ladoEsq);
+            circulo.ativar();
+            clienteDoRobot.setUltimoComportamento(circulo);
+            acabouDesenho = false;
+            esperaDesenho.release();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        circulo.setEstado(Estado.ATIVO);
-        circulo.setLadoEsq(ladoEsq);
-        clienteDoRobot.setUltimoComportamento(circulo);
-        acabouDesenho = false;
     }
 
     public void adicionarEspacamento() {
         if (clienteDoRobot.getUltimoComportamento() != null) {
-            espacamento.setDistancia(clienteDoRobot.getUltimoComportamento().getDistancia());
-            espacamento.setEstado(Estado.ATIVO);
-            acabouEspacar = false;
-            acabouDesenho = false;
+            try {
+                esperaDesenho.acquire();
+                espacamento.setDistancia(clienteDoRobot.getUltimoComportamento().getDistancia());
+                espacamento.ativar();
+                esperaDesenho.release();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -271,7 +274,6 @@ public class GUI extends JFrame {
             robotDesenhador.conectar();
         else
             robotDesenhador.desconectar();
-
     }
 
     private void handleClosing() {
@@ -334,10 +336,6 @@ public class GUI extends JFrame {
         return acabouDesenho;
     }
 
-    public void setAcabouEspacar(boolean acabouEspacar) {
-        this.acabouEspacar = acabouEspacar;
-    }
-
     public void setLadoEsq(boolean ladoEsq) {
         this.ladoEsq = ladoEsq;
     }
@@ -346,9 +344,13 @@ public class GUI extends JFrame {
         this.dist = dist;
     }
 
-    public int getDist() { return dist; }
+    public int getDist() {
+        return dist;
+    }
 
-    public Semaphore getMutex() { return mutex; }
+    public Semaphore getMutex() {
+        return mutex;
+    }
 
     public void run() {
         for (; ; ) {

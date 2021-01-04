@@ -31,6 +31,5 @@ public class ServidorDoRobot extends Thread {
                 e.printStackTrace();
             }
         }
-        System.out.println("A");
     }
 }
