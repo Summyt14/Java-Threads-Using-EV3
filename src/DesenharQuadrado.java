@@ -22,7 +22,7 @@ public class DesenharQuadrado extends Comportamento {
                 getCliente().parar(false);
                 getCliente().curvaEsq(raio, angulo);
                 getCliente().parar(false);
-                setEspera(10);
+                setEspera(dist);
             }
 
         } else {
@@ -31,8 +31,12 @@ public class DesenharQuadrado extends Comportamento {
                 getCliente().parar(false);
                 getCliente().curvaDir(raio, angulo);
                 getCliente().parar(false);
-                setEspera(10);
+                setEspera(dist);
             }
         }
+    }
+
+    public void setAngulo(int angulo) {
+        this.angulo = angulo;
     }
 }

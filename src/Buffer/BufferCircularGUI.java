@@ -157,5 +157,6 @@ public class BufferCircularGUI
         this.setIndexGet(0);
 
         this.setVisible(true);
+        this.setSize(1700,400);
     }
 }

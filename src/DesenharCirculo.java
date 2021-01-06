@@ -27,4 +27,8 @@ public class DesenharCirculo extends Comportamento {
         getCliente().parar(false);
         setEspera(10);
     }
+
+    public void setAngulo(int angulo) {
+        this.angulo = angulo;
+    }
 }

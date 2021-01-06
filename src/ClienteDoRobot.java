@@ -1,8 +1,5 @@
 import Buffer.IBufferCircular;
 
-import java.util.ArrayList;
-import java.util.concurrent.Semaphore;
-
 public class ClienteDoRobot{
 
     private IBufferCircular<Mensagem> buffer;

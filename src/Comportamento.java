@@ -27,7 +27,7 @@ public abstract class Comportamento extends Thread {
 
     public void setEspera(long raioOrDist) {
         try {
-            Thread.sleep(raioOrDist * velocidadeLinear);
+            Thread.sleep((raioOrDist / velocidadeLinear) * 1000);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -41,7 +41,7 @@ public abstract class Comportamento extends Thread {
         this.isLadoEsq = value;
     }
 
-    public abstract void desenho();
+    public abstract void desenho() throws InterruptedException;
 
     public abstract int getDistancia();
 

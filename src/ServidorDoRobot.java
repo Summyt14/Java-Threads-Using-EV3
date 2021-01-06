@@ -23,7 +23,6 @@ public class ServidorDoRobot extends Thread {
                     break;
 
                 Mensagem m = buffer.get();
-                System.out.println("Recebi " + m);
                 if (robotDesenhador.isConectado())
                     robotDesenhador.desenhar(m);
                 robotDesenhador.desenharGUI(m);
