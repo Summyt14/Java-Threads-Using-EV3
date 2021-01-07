@@ -1,108 +1,101 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.lang.reflect.InvocationTargetException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class GUIRobotDesenhador extends JFrame {
-    private Canvas c;
-    private int lastX = 50, lastY = 300;
+    private JTextArea textAreaRcvMsg;
 
-    private enum Direction {
-        RIGHT, UP, LEFT, DOWN;
-
-        public Direction getNextDir(boolean reverse) {
-            int nextOrdinal = Direction.values().length - 1;
-            if (reverse)
-                return (this.ordinal() == 0) ? Direction.DOWN : Direction.values()[this.ordinal() - 1];
-            return (this.ordinal() < nextOrdinal) ? Direction.values()[this.ordinal() + 1] : Direction.RIGHT;
-        }
-
-        public int[] toValues() {
-            switch (Direction.values()[this.ordinal()]) {
-                case UP:
-                    return new int[]{0, -1};
-                case DOWN:
-                    return new int[]{0, 1};
-                case LEFT:
-                    return new int[]{-1, 0};
-                case RIGHT:
-                    return new int[]{1, 0};
-            }
-            return new int[]{};
-        }
+    public GUIRobotDesenhador(){
+        init();
+        myInit();
     }
 
-    private Direction dir = Direction.RIGHT;
+    private void init() {
+        setTitle("Robot Desenhador");
+        setResizable(false);
+        getContentPane().setLayout(null);
 
-    public GUIRobotDesenhador() {
-        initialize();
-    }
+        JScrollPane scrollPaneRcvMsg = new JScrollPane();
+        // redimensiona aqui
+        scrollPaneRcvMsg.setBounds(47, 32, 409, 850);
+        getContentPane().add(scrollPaneRcvMsg);
 
-    public void initialize() {
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setTitle("GUI Robot Desenhador");
+        textAreaRcvMsg = new JTextArea();
+        scrollPaneRcvMsg.setViewportView(textAreaRcvMsg);
 
-        c = new Canvas() {
-            public void paint(Graphics g) {
-            }
-        };
+        JButton btnClear = new JButton("Clear");
+        btnClear.addActionListener(e->handleBtnClear());
+        btnClear.setBounds(339, 900, 117, 29);
+        getContentPane().add(btnClear);
 
-        c.setBackground(Color.black);
-
-        add(c);
-        setSize(800, 600);
-        //  setResizable(false);
+        setSize(508, 1000);
         setVisible(true);
     }
 
-    public void desenhar(Mensagem msg) {
-        Graphics g = c.getGraphics();
-        g.setColor(Color.BLACK);
-        g.fillRect(0, 0, 200, 100);
-        g.setColor(Color.red);
-        g.setFont(new Font("Bold", 1, 20));
+    private void myInit() {
+        textAreaRcvMsg.setEditable(false);
+    }
 
+    private void handleBtnClear() {
+        textAreaRcvMsg.setText("");
+    }
+
+    public void desenhar(Mensagem msg) {
+        Date dNow = new Date();
+        SimpleDateFormat ft = new SimpleDateFormat ("hh:mm:ss");
+
+        String msgToLog = "";
         switch (msg.getTipo()) {
-            case 0:
-                g.drawString("Reta", 10, 30);
-                int[] rot = dir.toValues();
-                g.setColor(Color.red);
-                g.drawLine(lastX, lastY, lastX + (msg.getRaio() * 10 * rot[0]), lastY + (msg.getRaio() * 10 * rot[1]));
-                lastX += (msg.getRaio() * 10 * rot[0]);
-                lastY += (msg.getRaio() * 10 * rot[1]);
+            case 0: // Reta
+                msgToLog = "Reta: Lado = " + msg.getRaio();
                 break;
-            case 1:
-                g.drawString("Curva Esquerda", 10, 30);
-                if (msg.getRaio() == 0)
-                    dir = dir.getNextDir(false);
-                else {
-                    int initX = lastX;
-                    int initY = lastY;
-                    lastY -= msg.getRaio();
-                    g.setColor(Color.red);
-                    g.drawOval(lastX, lastY, msg.getRaio(), msg.getRaio());
-                    lastX = initX;
-                    lastY = initY;
-                }
+            case 1: // Curva Esquerda
+                msgToLog = "Curva Esquerda: Raio = " + msg.getRaio() + ", Angulo = " + msg.getAngulo();
                 break;
-            case 2:
-                g.drawString("Parar", 10, 30);
+            case 2: // Parar
+                msgToLog = "Parar";
                 break;
-            case 3:
-                g.drawString("Curva Direita", 10, 30);
-                if (msg.getRaio() == 0)
-                    dir = dir.getNextDir(true);
-                else {
-                    int initX = lastX;
-                    int initY = lastY;
-                    g.setColor(Color.red);
-                    g.drawOval(lastX, 300, msg.getRaio(), msg.getRaio());
-                    lastX = initX;
-                    lastY = initY;
-                }
+            case 3: // Curva Direita
+                msgToLog = "Curva Direita: Raio = " + msg.getRaio() + ", Angulo = " + msg.getAngulo();
                 break;
-            case 4:
-                g.drawString("Espaçamento", 10, 30);
-                lastX += 75;
+            case 4: // Espaçar
+                msgToLog = "Espaçamento: Lado = " + msg.getRaio();
                 break;
         }
+
+        String log = "<" + ft.format(dNow) + "> " + msgToLog + "\n";
+        textAreaRcvMsg.append(log);
+    }
+
+    static class MyRunnable implements Runnable {
+        private GUIRobotDesenhador window;
+
+        public GUIRobotDesenhador getWindow() {
+            return this.window;
+        }
+
+        public void run() {
+            this.window = new GUIRobotDesenhador();
+        }
+    }
+
+    static void launch() {
+        MyRunnable r = new MyRunnable();
+
+        try {
+            EventQueue.invokeAndWait(r);
+        } catch (InvocationTargetException | InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        r.getWindow().run();
+    }
+
+    private void run(){
+
     }
 }

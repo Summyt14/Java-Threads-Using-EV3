@@ -13,7 +13,7 @@ public class BufferCircularMonitores<E>
 
     @Override
     public synchronized void put(E e) throws InterruptedException {
-        Thread.sleep(1000);
+        //Thread.sleep(1000);
 
         // Colocar o novo elemento na posição correspondente
         this.elements[this.idxPut] = e;
