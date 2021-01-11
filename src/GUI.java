@@ -21,33 +21,33 @@ public class GUI extends JFrame {
     private JButton btnGUIDesenhador;
     private JButton btnQuadrado;
     private JButton btnCirculo;
+    private ButtonGroup group;
+    private JRadioButton rdbtnCurvarEsq;
+    private JRadioButton rdbtnCurvarDireita;
+    private JSpinner spinnerLado;
+    private JSpinner spinnerRaio;
+    private JSpinner spinnerDeltaAng;
 
     private ServidorDoRobot servidorDoRobot;
     private RobotDesenhador robotDesenhador;
     private ClienteDoRobot clienteDoRobot;
     private GUIRobotDesenhador guiRD;
-    private boolean endApp = false;
-    private boolean toggleGUIRD = false;
-    private IBufferCircularGUI guiBuffer;
-    private IBufferCircular<Mensagem> buffer;
-    private final static int MAX_BUFFER_SIZE = 16;
-    private JRadioButton rdbtnCurvarEsq;
-    private ButtonGroup group;
-    private JRadioButton rdbtnCurvarDireita;
-    private JSpinner spinnerLado;
-    private JSpinner spinnerRaio;
-
+    private GUIGravarFormas guiSpy;
     private DesenharQuadrado quadrado;
     private DesenharCirculo circulo;
     private EspacarFormasGeometricas espacamento;
 
+    private boolean endApp = false;
+    private boolean toggleGUIRD = false;
+    private boolean toggleGUISpy = false;
     private boolean ladoEsq;
     private boolean acabouDesenho;
+    private IBufferCircularGUI guiBuffer;
+    private IBufferCircular<Mensagem> buffer;
+    private final static int MAX_BUFFER_SIZE = 16;
     private int dist = 0;
     private Semaphore mutex;
     private Semaphore esperaDesenho;
-    private JSpinner spinner_deltaang;
-
 
     public GUI() {
         initialize();
@@ -110,33 +110,33 @@ public class GUI extends JFrame {
 
         spinnerLado = new JSpinner();
         spinnerLado.setModel(new SpinnerNumberModel(30, 20, 60, 1));
-        spinnerLado.setBounds(55, 192, 51, 20);
+        spinnerLado.setBounds(55, 180, 51, 20);
         panelComportamentos.add(spinnerLado);
 
         spinnerRaio = new JSpinner();
         spinnerRaio.setModel(new SpinnerNumberModel(35, 0, 360, 1));
-        spinnerRaio.setBounds(142, 192, 51, 20);
+        spinnerRaio.setBounds(142, 180, 51, 20);
         panelComportamentos.add(spinnerRaio);
 
-        JLabel lblNewLabel = new JLabel("Lado");
-        lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        lblNewLabel.setBounds(55, 171, 51, 17);
-        panelComportamentos.add(lblNewLabel);
+        JLabel lblLado = new JLabel("Lado");
+        lblLado.setHorizontalAlignment(SwingConstants.CENTER);
+        lblLado.setBounds(55, 161, 51, 17);
+        panelComportamentos.add(lblLado);
 
         JLabel lblRaio = new JLabel("Raio");
         lblRaio.setHorizontalAlignment(SwingConstants.CENTER);
-        lblRaio.setBounds(142, 171, 51, 17);
+        lblRaio.setBounds(142, 161, 51, 17);
         panelComportamentos.add(lblRaio);
 
-        JLabel ajuste_angulo_txt = new JLabel("Ajustar ângulo");
-        ajuste_angulo_txt.setHorizontalAlignment(SwingConstants.CENTER);
-        ajuste_angulo_txt.setBounds(6, 224, 104, 17);
-        panelComportamentos.add(ajuste_angulo_txt);
+        JLabel ajusteAnguloTxt = new JLabel("Ajustar ângulo");
+        ajusteAnguloTxt.setHorizontalAlignment(SwingConstants.CENTER);
+        ajusteAnguloTxt.setBounds(6, 224, 104, 17);
+        panelComportamentos.add(ajusteAnguloTxt);
 
-        spinner_deltaang = new JSpinner();
-        spinner_deltaang.setModel(new SpinnerNumberModel(0, -180, 180, 1));
-        spinner_deltaang.setBounds(109, 219, 34, 26);
-        panelComportamentos.add(spinner_deltaang);
+        spinnerDeltaAng = new JSpinner();
+        spinnerDeltaAng.setModel(new SpinnerNumberModel(0, -180, 180, 1));
+        spinnerDeltaAng.setBounds(109, 219, 40, 26);
+        panelComportamentos.add(spinnerDeltaAng);
 
         chckbxIniciaRobot = new JCheckBox("Conectar robot");
         chckbxIniciaRobot.addActionListener(e -> handleIniciarRobot());
@@ -175,6 +175,10 @@ public class GUI extends JFrame {
         rdbtnCurvarDireita.setActionCommand("1");
         group.add(rdbtnCurvarEsq);
         group.add(rdbtnCurvarDireita);
+
+        guiSpy = new GUIGravarFormas();
+        clienteDoRobot = new ClienteDoRobot(buffer, guiSpy.getGravador());
+        criarComportamentos();
     }
 
     private void criarComportamentos() {
@@ -194,7 +198,7 @@ public class GUI extends JFrame {
         try {
             esperaDesenho.acquire();
             quadrado.setLadoEsq(ladoEsq);
-            quadrado.setAngulo(90 + (int)spinner_deltaang.getValue());
+            quadrado.setAngulo(90 + (int) spinnerDeltaAng.getValue());
             quadrado.ativar();
             clienteDoRobot.setUltimoComportamento(quadrado);
             acabouDesenho = false;
@@ -209,7 +213,7 @@ public class GUI extends JFrame {
         try {
             esperaDesenho.acquire();
             circulo.setLadoEsq(ladoEsq);
-            circulo.setAngulo(360 + (int)spinner_deltaang.getValue());
+            circulo.setAngulo(360 + (int) spinnerDeltaAng.getValue());
             circulo.ativar();
             clienteDoRobot.setUltimoComportamento(circulo);
             acabouDesenho = false;
@@ -242,8 +246,6 @@ public class GUI extends JFrame {
         try {
             guiBuffer = new BufferCircularGUI(MAX_BUFFER_SIZE);
             buffer = new BufferCircularMonitores<>(MAX_BUFFER_SIZE, guiBuffer);
-            clienteDoRobot = new ClienteDoRobot(buffer);
-            criarComportamentos();
         } catch (Exception e) {
             e.printStackTrace();
             if (this.guiBuffer != null) {
@@ -253,12 +255,8 @@ public class GUI extends JFrame {
     }
 
     private void handleCreateServer() {
-        if (textFieldNomeRobot.getText().trim().equals("")) {
-            return;
-        }
-
+        if (textFieldNomeRobot.getText().trim().equals("")) return;
         guiRD = new GUIRobotDesenhador();
-        
         robotDesenhador = new RobotDesenhador(textFieldNomeRobot.getText().trim(), guiRD);
         servidorDoRobot = new ServidorDoRobot(buffer, robotDesenhador);
         servidorDoRobot.start();
@@ -274,7 +272,7 @@ public class GUI extends JFrame {
         }
 
         if (textFieldNomeRobot.getText().trim().equals("")) {
-            String msg = "Tem de indicar o nome do robot antes de o abrir.";
+            String msg = "Tem de indicar o nome do robot antes de o conectar.";
             JOptionPane.showMessageDialog(null, msg, "Erro", JOptionPane.ERROR_MESSAGE);
             chckbxIniciaRobot.setSelected(false);
             return;
@@ -295,7 +293,6 @@ public class GUI extends JFrame {
             guiRD.dispose();
         if (guiBuffer != null)
             guiBuffer.dispose();
-
         if (servidorDoRobot != null)
             servidorDoRobot.setEnd();
         endApp = true;
@@ -331,8 +328,7 @@ public class GUI extends JFrame {
     }
 
     private void handleAtivarEspiao() {
-        GUIGravarFormas spyrobot = new GUIGravarFormas();
-        spyrobot.run();
+        guiSpy.mostrarGUI(!toggleGUISpy);
     }
 
     public void acabeiDesenho() {

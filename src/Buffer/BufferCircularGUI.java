@@ -20,12 +20,7 @@ public class BufferCircularGUI
     private JLabel lblIndicePut;
 
     public void setText(int pos, String text) {
-        Runnable r = new Runnable() {
-            @Override
-            public void run() {
-                texValues[pos].setText(text);
-            }
-        };
+        Runnable r = () -> texValues[pos].setText(text);
         if (SwingUtilities.isEventDispatchThread()) {
             r.run();
         } else {
@@ -34,13 +29,9 @@ public class BufferCircularGUI
     }
 
     public void setIndexPut(int pos) {
-        Runnable r = new Runnable() {
-            @Override
-            public void run() {
-                indexPut[pos].setSelected(true);
-
-                lblIndicePut.setText(String.format("Índice put = %d", pos));
-            }
+        Runnable r = () -> {
+            indexPut[pos].setSelected(true);
+            lblIndicePut.setText(String.format("Índice put = %d", pos));
         };
         if (SwingUtilities.isEventDispatchThread()) {
             r.run();
@@ -50,13 +41,10 @@ public class BufferCircularGUI
     }
 
     public void setIndexGet(int pos) {
-        Runnable r = new Runnable() {
-            @Override
-            public void run() {
-                indexGet[pos].setSelected(true);
+        Runnable r = () -> {
+            indexGet[pos].setSelected(true);
 
-                lblIndiceGet.setText(String.format("Índice get = %d", pos));
-            }
+            lblIndiceGet.setText(String.format("Índice get = %d", pos));
         };
         if (SwingUtilities.isEventDispatchThread()) {
             r.run();
@@ -66,12 +54,7 @@ public class BufferCircularGUI
     }
 
     public void displayNumberOfItems(int numberOfItems) {
-        Runnable r = new Runnable() {
-            @Override
-            public void run() {
-                setTitle(String.format("Number of items = %d", numberOfItems));
-            }
-        };
+        Runnable r = () -> setTitle(String.format("Number of items = %d", numberOfItems));
         if (SwingUtilities.isEventDispatchThread()) {
             r.run();
         } else {
@@ -89,13 +72,6 @@ public class BufferCircularGUI
         } else {
             setVisible(true);
         }
-    }
-
-    /**
-     * Create the frame.
-     */
-    public BufferCircularGUI() {
-        this(8);
     }
 
     public BufferCircularGUI(int dim) {
@@ -157,6 +133,6 @@ public class BufferCircularGUI
         this.setIndexGet(0);
 
         this.setVisible(true);
-        this.setSize(1700,400);
+        this.setSize(1800,380);
     }
 }
