@@ -2,11 +2,11 @@ public class RobotDesenhador {
     private RobotLegoEV3 robot;
     private String nome;
     private boolean conectado;
-    GUIRobotDesenhador gui;
+    private GUIRobotDesenhador guiDesenhador;
 
-    public RobotDesenhador(String nome, GUIRobotDesenhador gui) {
+    public RobotDesenhador(String nome, GUIRobotDesenhador guiDesenhador) {
         this.nome = nome;
-        this.gui = gui;
+        this.guiDesenhador = guiDesenhador;
     }
 
     public void setNome(String nome) {
@@ -14,42 +14,32 @@ public class RobotDesenhador {
     }
 
     public void desenhar(Mensagem msg) {
-        switch (msg.getTipo()) {
-            case 0: case 4:
-                robot.Reta(msg.getRaio());
-                break;
-            case 1:
-                robot.CurvarEsquerda(msg.getRaio(), msg.getAngulo());
-                break;
-            case 2:
-                robot.Parar(msg.isParar());
-                break;
-            case 3:
-                robot.CurvarDireita(msg.getRaio(), msg.getAngulo());
-                break;
-        }
+        if (conectado) msg.executarComando(robot);
+        guiDesenhador.log(msg.toString());
+    }
+
+    public void mostrarGUI(boolean value) {
+        guiDesenhador.setVisible(value);
     }
 
     public void conectar() {
         robot = new RobotLegoEV3();
         conectado = robot.OpenEV3(nome);
         if (conectado) {
-            System.out.println("Robot " + nome + " conectado!");
+            String msg = "Robot " + nome + " conectado!";
+            guiDesenhador.log(msg);
+            System.out.println(msg);
         }
     }
 
     public void desconectar() {
         robot.CloseEV3();
-        System.out.println("Robot " + nome + " desconectado!");
+        String msg = "Robot " + nome + " desconectado!";
+        guiDesenhador.log(msg);
+        System.out.println(msg);
     }
 
     public boolean isConectado() {
         return conectado;
     }
-
-    public void mostrarGUI(boolean value) {
-        gui.setVisible(value);
-    }
-
-    public void desenharGUI(Mensagem msg) { gui.desenhar(msg);}
 }

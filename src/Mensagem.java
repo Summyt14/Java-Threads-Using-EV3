@@ -1,10 +1,9 @@
 public abstract class Mensagem {
 
-    protected int id;
-    protected int tipo;
-    protected int raio;
-    protected int angulo;
-    protected boolean parar;
+    private int tipo;
+    private int raio;
+    private int angulo;
+    private boolean parar;
 
     public Mensagem(int tipo, int raio, int angulo, boolean parar) {
         this.tipo = tipo;
@@ -13,9 +12,7 @@ public abstract class Mensagem {
         this.parar = parar;
     }
 
-    public int getId() {
-        return id;
-    }
+    public abstract void executarComando(RobotLegoEV3 r);
 
     public int getTipo() {
         return tipo;
@@ -29,33 +26,7 @@ public abstract class Mensagem {
         return angulo;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public void setTipo(int tipo) {
-        this.tipo = tipo;
-    }
-
-    public void setRaio(int raio) {
-        this.raio = raio;
-    }
-
-    public void setAngulo(int angulo) {
-        this.angulo = angulo;
-    }
-
-    @Override
-    public String toString() {
-        return this.tipo + "," + this.raio + "," + this.angulo + "," + this.parar;
-    }
-
-    public boolean isParar() {
+    public boolean getParar() {
         return parar;
     }
-
-    public void setParar(boolean parar) {
-        this.parar = parar;
-    }
-
 }

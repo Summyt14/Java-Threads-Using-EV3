@@ -1,24 +1,18 @@
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JTextField;
-import javax.swing.ButtonGroup;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import javax.swing.JRadioButton;
+import javax.swing.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @SuppressWarnings("serial")
 public class GUIGravarFormas extends JFrame {
-    private JTextField textFieldSearch;
-    private String fileName;
-    private ButtonGroup group;
-    private JCheckBox rdbtnGravarFormas;
-    private JCheckBox rdbtnReproduzirFormas;
-    private JRadioButton rdbtnAlterarNomeFile;
-    private JButton btnChangeFilename;
-    private JTextField textFieldNewFilename;
+    private JMenuItem menuAbrir;
+    private JMenuItem menuNovo;
+    private JMenuItem menuVerConteudo;
+    private JTextArea txtAreaMsgGravadas;
+    private JToggleButton tglBtnGravacao;
+    private JButton btnReproducao;
+
+    private GravarFormas gravador;
+    private String filename = "";
 
     public GUIGravarFormas() {
         init();
@@ -30,112 +24,113 @@ public class GUIGravarFormas extends JFrame {
         setResizable(false);
         getContentPane().setLayout(null);
 
-        textFieldSearch = new JTextField();
-        textFieldSearch.setBounds(6, 6, 352, 26);
-        getContentPane().add(textFieldSearch);
 
-        JButton btn_browseFile = new JButton("Browse File");
-        btn_browseFile.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                handleBtnBrowse();
-            }
-        });
-        btn_browseFile.setBounds(370, 6, 117, 29);
-        getContentPane().add(btn_browseFile);
+        tglBtnGravacao = new JToggleButton("Iniciar/Parar Grava\u00E7\u00E3o");
+        tglBtnGravacao.setBounds(150, 26, 178, 34);
+        tglBtnGravacao.addActionListener(e -> handleGravacao());
+        getContentPane().add(tglBtnGravacao);
 
-        rdbtnGravarFormas = new JCheckBox("Gravar no ficheiro");
-        rdbtnGravarFormas.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                handleGravarFicheiro();
-            }
+        btnReproducao = new JButton("Iniciar Reprodu\u00E7\u00E3o");
+        btnReproducao.setBounds(150, 89, 178, 34);
+        btnReproducao.addActionListener(e -> handleReproducao());
+        getContentPane().add(btnReproducao);
 
-        });
-        rdbtnGravarFormas.setBounds(81, 76, 154, 23);
-        getContentPane().add(rdbtnGravarFormas);
+        JScrollPane scrollPaneRcvMsg = new JScrollPane();
+        scrollPaneRcvMsg.setBounds(40, 171, 394, 189);
+        getContentPane().add(scrollPaneRcvMsg);
 
-        rdbtnReproduzirFormas = new JCheckBox("Reproduzir formas");
-        rdbtnReproduzirFormas.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                handleReproduzirFormas();
-            }
+        txtAreaMsgGravadas = new JTextArea();
+        scrollPaneRcvMsg.setViewportView(txtAreaMsgGravadas);
+        txtAreaMsgGravadas.setEditable(false);
 
-        });
-        rdbtnReproduzirFormas.setBounds(81, 123, 165, 23);
-        getContentPane().add(rdbtnReproduzirFormas);
+        JLabel mensagensGravadas = new JLabel("Mensagens Gravadas");
+        mensagensGravadas.setBounds(40, 148, 164, 13);
+        getContentPane().add(mensagensGravadas);
 
-        rdbtnAlterarNomeFile = new JRadioButton("Alterar nome do ficheiro");
-        rdbtnAlterarNomeFile.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                handleAlterarNomeFile();
-            }
+        setSize(493, 450);
 
-        });
-        rdbtnAlterarNomeFile.setBounds(81, 170, 193, 23);
-        getContentPane().add(rdbtnAlterarNomeFile);
+        JMenuBar menuBar = new JMenuBar();
+        setJMenuBar(menuBar);
 
-        textFieldNewFilename = new JTextField();
-        textFieldNewFilename.setBounds(109, 205, 206, 26);
-        getContentPane().add(textFieldNewFilename);
-        textFieldNewFilename.setColumns(10);
+        JMenu menuFicheiro = new JMenu("Ficheiro");
+        menuBar.add(menuFicheiro);
 
-        btnChangeFilename = new JButton("Change filename");
-        btnChangeFilename.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                handleChangeFilename();
-            }
+        menuAbrir = new JMenuItem("Abrir");
+        menuAbrir.addActionListener(e -> handleAbrir());
+        menuFicheiro.add(menuAbrir);
 
-        });
-        btnChangeFilename.setBounds(327, 205, 135, 29);
-        getContentPane().add(btnChangeFilename);
+        menuNovo = new JMenuItem("Novo");
+        menuNovo.addActionListener(e -> handleNovo());
+        menuFicheiro.add(menuNovo);
 
-        setSize(508, 311);
-        setVisible(true);
+        menuVerConteudo = new JMenuItem("Ver conteudo");
+        menuVerConteudo.addActionListener(e -> handleVerConteudos());
+        menuFicheiro.add(menuVerConteudo);
+        menuVerConteudo.setEnabled(false);
+        setVisible(false);
+        setResizable(false);
+
     }
 
     private void myInit() {
-        if (textFieldSearch.getText().trim().equals(""))
-            textFieldSearch.setText("comunicacao.dat");
-
-
-        textFieldNewFilename.setVisible(rdbtnAlterarNomeFile.isSelected());
-        btnChangeFilename.setVisible(rdbtnAlterarNomeFile.isSelected());
+        gravador = new GravarFormas(this);
+        gravador.start();
     }
 
-    private void handleBtnBrowse() {
+    private void handleAbrir() {
         JFileChooser chooser = new JFileChooser();
-        if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-            textFieldSearch.setText(chooser.getSelectedFile().getAbsolutePath());
-            fileName = textFieldSearch.getText();
-
+        int returnVal = chooser.showOpenDialog(null);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            filename = chooser.getSelectedFile().getAbsolutePath();
+            gravador.novoFicheiro(filename);
+            menuVerConteudo.setEnabled(true);
         }
+    }
 
-        System.out.println("Browsing");
+    private void handleNovo() {
+        filename = JOptionPane.showInputDialog("Intruduza o nome e a extensão do ficheiro.");
+        gravador.novoFicheiro(filename);
+    }
+
+    private void handleVerConteudos() {
 
     }
 
-    private void handleGravarFicheiro() {
-        rdbtnReproduzirFormas.setSelected(false);
-        textFieldNewFilename.setVisible(rdbtnAlterarNomeFile.isSelected());
-        btnChangeFilename.setVisible(rdbtnAlterarNomeFile.isSelected());
+    private void handleGravacao() {
+        if (tglBtnGravacao.isSelected()) {
+            gravador.setEstadoGravador(EstadoGravador.GRAVAR);
+            btnReproducao.setEnabled(false);
+        } else
+            btnReproducao.setEnabled(true);
     }
 
-    private void handleReproduzirFormas() {
-        rdbtnGravarFormas.setSelected(false);
-        textFieldNewFilename.setVisible(rdbtnAlterarNomeFile.isSelected());
-        btnChangeFilename.setVisible(rdbtnAlterarNomeFile.isSelected());
+    private void handleReproducao() {
+        gravador.setEstadoGravador(EstadoGravador.REPRODUZIR);
+        btnReproducao.setEnabled(false);
+        tglBtnGravacao.setEnabled(false);
     }
 
-    private void handleAlterarNomeFile() {
-        textFieldNewFilename.setVisible(rdbtnAlterarNomeFile.isSelected());
-        btnChangeFilename.setVisible(rdbtnAlterarNomeFile.isSelected());
+    public void log(String msg) {
+        Date dNow = new Date();
+        SimpleDateFormat ft = new SimpleDateFormat("hh:mm:ss");
+        String log = "<" + ft.format(dNow) + "> " + msg + "\n";
+        txtAreaMsgGravadas.append(log);
     }
 
-    private void handleChangeFilename() {
-        // TODO Auto-generated method stub
+    public GravarFormas getGravador() {
+        return gravador;
+    }
 
+    public void mostrarGUI(boolean value) {
+        setVisible(value);
     }
 
     public void run() {
-
+        for (; ; ) {
+            if (gravador.isParado() && !gravador.getFicheiro().equals("")) {
+                btnReproducao.setEnabled(true);
+                tglBtnGravacao.setEnabled(true);
+            }
+        }
     }
 }

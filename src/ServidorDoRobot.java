@@ -18,14 +18,12 @@ public class ServidorDoRobot extends Thread {
     public void run() {
         for (; ; ) {
             try {
-            	Thread.sleep(1);
+            	Thread.sleep(10);
                 if (this.endApp)
                     break;
 
-                Mensagem m = buffer.get();
-                if (robotDesenhador.isConectado())
-                    robotDesenhador.desenhar(m);
-                robotDesenhador.desenharGUI(m);
+                robotDesenhador.desenhar(buffer.get());
+
             } catch (Exception e) {
                 e.printStackTrace();
             }

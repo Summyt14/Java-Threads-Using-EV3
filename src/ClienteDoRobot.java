@@ -1,12 +1,14 @@
 import Buffer.IBufferCircular;
 
-public class ClienteDoRobot{
+public class ClienteDoRobot {
 
     private IBufferCircular<Mensagem> buffer;
     private Comportamento ultimoComportamento;
+    private GravarFormas gf;
 
-    public ClienteDoRobot(IBufferCircular<Mensagem> buffer) {
+    public ClienteDoRobot(IBufferCircular<Mensagem> buffer, GravarFormas gf) {
         this.buffer = buffer;
+        this.gf = gf;
     }
 
     public Comportamento getUltimoComportamento() {
@@ -39,9 +41,12 @@ public class ClienteDoRobot{
 
     public void escreverBuffer(Mensagem msg) {
         try {
+            if (gf.getEstado() == EstadoGravador.GRAVAR)
+                gf.adicionarMensagem(msg);
+            if (buffer == null) throw new InterruptedException();
             buffer.put(msg);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            System.err.println("Problemas no buffer. Não foi enviada a mensagem " + msg);
         }
     }
 }
