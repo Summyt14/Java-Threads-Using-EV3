@@ -3,7 +3,6 @@ import java.util.concurrent.Semaphore;
 public abstract class Comportamento extends Thread {
 
     private static int velocidadeLinear = 22;
-
     private boolean isLadoEsq;
     private ClienteDoRobot clienteDoRobot;
     private GUI gui;

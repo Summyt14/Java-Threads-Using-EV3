@@ -2,9 +2,13 @@ import javax.swing.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-@SuppressWarnings("serial")
+
 public class GUIGravarFormas extends JFrame {
-    private JMenuItem menuAbrir;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -3798051427778409493L;
+	private JMenuItem menuAbrir;
     private JMenuItem menuNovo;
     private JMenuItem menuVerConteudo;
     private JTextArea txtAreaMsgGravadas;
@@ -43,7 +47,7 @@ public class GUIGravarFormas extends JFrame {
         scrollPaneRcvMsg.setViewportView(txtAreaMsgGravadas);
         txtAreaMsgGravadas.setEditable(false);
 
-        JLabel mensagensGravadas = new JLabel("Mensagens Gravadas");
+        JLabel mensagensGravadas = new JLabel("Logs");
         mensagensGravadas.setBounds(40, 148, 164, 13);
         getContentPane().add(mensagensGravadas);
 
@@ -98,10 +102,14 @@ public class GUIGravarFormas extends JFrame {
 
     private void handleGravacao() {
         if (tglBtnGravacao.isSelected()) {
-            gravador.setEstadoGravador(EstadoGravador.GRAVAR);
             btnReproducao.setEnabled(false);
-        } else
+            gravador.gravar(true);
+            gravador.setEstadoGravador(EstadoGravador.GRAVAR);
+        } else {           
             btnReproducao.setEnabled(true);
+            gravador.gravar(false);
+            gravador.setEstadoGravador(EstadoGravador.PARADO);
+        }
     }
 
     private void handleReproducao() {
@@ -124,13 +132,10 @@ public class GUIGravarFormas extends JFrame {
     public void mostrarGUI(boolean value) {
         setVisible(value);
     }
-
-    public void run() {
-        for (; ; ) {
-            if (gravador.isParado() && !gravador.getFicheiro().equals("")) {
-                btnReproducao.setEnabled(true);
-                tglBtnGravacao.setEnabled(true);
-            }
-        }
+    
+    public void acabouReproducao() {
+    	btnReproducao.setEnabled(true);
+        tglBtnGravacao.setEnabled(true);
     }
+
 }

@@ -1,6 +1,12 @@
-public abstract class Mensagem {
+import java.io.Serializable;
 
-    private int tipo;
+public abstract class Mensagem implements Serializable {
+
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -5453087572800218536L;
+	private int tipo;
     private int raio;
     private int angulo;
     private boolean parar;

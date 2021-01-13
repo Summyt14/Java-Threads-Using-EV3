@@ -1,14 +1,11 @@
-import com.sun.security.ntlm.Client;
 
 public class EspacarFormasGeometricas extends Comportamento{
 
     private int distancia;
-    private GUI gui;
 
     public EspacarFormasGeometricas(int distancia, ClienteDoRobot clienteDoRobot, GUI gui){
         super(false, clienteDoRobot, gui);
         this.distancia = distancia;
-        this.gui = gui;
     }
 
     public int getDistancia() {

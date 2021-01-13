@@ -13,9 +13,13 @@ import java.awt.event.WindowEvent;
 import java.util.concurrent.Semaphore;
 import javax.swing.border.EtchedBorder;
 
-@SuppressWarnings("serial")
+
 public class GUI extends JFrame {
-    private JTextField textFieldNomeRobot;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 8502496328362365351L;
+	private JTextField textFieldNomeRobot;
     private JCheckBox chckbxIniciaRobot;
     private JButton btnCriaBufferEServidor;
     private JButton btnGUIDesenhador;
@@ -291,6 +295,8 @@ public class GUI extends JFrame {
             robotDesenhador.desconectar();
         if (guiRD != null)
             guiRD.dispose();
+        if (guiSpy != null)
+        	guiSpy.dispose();
         if (guiBuffer != null)
             guiBuffer.dispose();
         if (servidorDoRobot != null)
@@ -355,7 +361,7 @@ public class GUI extends JFrame {
         return mutex;
     }
 
-    public void run() {
+    public void run() {	
         for (; ; ) {
             try {
                 if (this.endApp) {

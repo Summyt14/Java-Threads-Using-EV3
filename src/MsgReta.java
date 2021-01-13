@@ -1,4 +1,12 @@
-public class MsgReta extends Mensagem{
+import java.io.Serializable;
+
+public class MsgReta extends Mensagem implements Serializable {
+
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5771700311899782645L;
 
 	public MsgReta(int distancia) {
 		super(0, distancia,0 , false);

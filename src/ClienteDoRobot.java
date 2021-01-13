@@ -41,8 +41,7 @@ public class ClienteDoRobot {
 
     public void escreverBuffer(Mensagem msg) {
         try {
-            if (gf.getEstado() == EstadoGravador.GRAVAR)
-                gf.adicionarMensagem(msg);
+            gf.adicionarMensagem(msg);
             if (buffer == null) throw new InterruptedException();
             buffer.put(msg);
         } catch (InterruptedException e) {

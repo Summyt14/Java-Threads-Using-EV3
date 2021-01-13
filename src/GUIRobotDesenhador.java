@@ -1,10 +1,13 @@
 import javax.swing.*;
-import java.awt.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class GUIRobotDesenhador extends JFrame {
-    private JTextArea textAreaRcvMsg;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 7852897540266445539L;
+	private JTextArea textAreaRcvMsg;
 
     public GUIRobotDesenhador() {
         init();

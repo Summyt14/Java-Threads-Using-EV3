@@ -1,4 +1,11 @@
-public class MsgCurvaEsq extends Mensagem{
+import java.io.Serializable;
+
+public class MsgCurvaEsq extends Mensagem implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5232271624026947085L;
 
 	public MsgCurvaEsq(int raio, int angulo) {
 		super(1, raio, angulo, false);
