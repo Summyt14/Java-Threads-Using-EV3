@@ -2,62 +2,63 @@ import java.util.concurrent.Semaphore;
 
 public abstract class Comportamento extends Thread {
 
-    private static int velocidadeLinear = 22;
-    private boolean isLadoEsq;
-    private ClienteDoRobot clienteDoRobot;
-    private GUI gui;
-    private Semaphore smpEstado;
+	private static float velocidadeLinear = 22.0f;
+	private boolean isLadoEsq;
+	private ClienteDoRobot clienteDoRobot;
+	private GUI gui;
+	private Semaphore smpEstado;
 
-    public Comportamento(boolean isLadoEsq, ClienteDoRobot clienteDoRobot, GUI gui) {
-        this.isLadoEsq = isLadoEsq;
-        this.clienteDoRobot = clienteDoRobot;
-        this.gui = gui;
-        smpEstado = new Semaphore(0);
-    }
+	public Comportamento(boolean isLadoEsq, ClienteDoRobot clienteDoRobot, GUI gui) {
+		this.isLadoEsq = isLadoEsq;
+		this.clienteDoRobot = clienteDoRobot;
+		this.gui = gui;
+		smpEstado = new Semaphore(0);
+	}
 
-    public boolean isLadoEsq() {
-        return isLadoEsq;
-    }
+	public boolean isLadoEsq() {
+		return isLadoEsq;
+	}
 
-    public ClienteDoRobot getCliente() {
-        return clienteDoRobot;
-    }
+	public ClienteDoRobot getCliente() {
+		return clienteDoRobot;
+	}
 
-    public void setEspera(long raioOrDist) {
-        try {
-            Thread.sleep((raioOrDist / velocidadeLinear) * 1000);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+	public void setEspera(float raioOrDist) {
+		try {
+			Thread.sleep((long) ((raioOrDist / velocidadeLinear) * 1000.0f));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
-    public void ativar() {
-        smpEstado.release();
-    }
+	public void ativar() {
+		smpEstado.release();
+	}
 
-    public void setLadoEsq(boolean value) {
-        this.isLadoEsq = value;
-    }
+	public void setLadoEsq(boolean value) {
+		this.isLadoEsq = value;
+	}
 
-    public abstract void desenho() throws InterruptedException;
+	public abstract void desenho() throws InterruptedException;
 
-    public abstract int getDistancia();
+	public abstract int getDistancia();
 
-    public void run() {
-        for (; ; ) {
-            try {
-                smpEstado.acquire();
-                try {
-                    gui.getMutex().acquire();
-                    desenho();
-                    gui.acabeiDesenho();
-                    gui.getMutex().release();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
+	@Override
+	public void run() {
+		for (;;) {
+			try {
+				smpEstado.acquire();
+				try {
+					gui.getMutex().acquire();
+					desenho();
+					gui.acabeiDesenho();
+					gui.getMutex().release();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
 }

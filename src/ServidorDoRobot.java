@@ -15,6 +15,7 @@ public class ServidorDoRobot extends Thread {
         this.endApp = true;
     }
 
+    @Override
     public void run() {
         for (; ; ) {
             try {

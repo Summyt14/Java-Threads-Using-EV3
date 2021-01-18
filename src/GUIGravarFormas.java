@@ -10,7 +10,6 @@ public class GUIGravarFormas extends JFrame {
 	private static final long serialVersionUID = -3798051427778409493L;
 	private JMenuItem menuAbrir;
     private JMenuItem menuNovo;
-    private JMenuItem menuVerConteudo;
     private JTextArea txtAreaMsgGravadas;
     private JToggleButton tglBtnGravacao;
     private JButton btnReproducao;
@@ -30,14 +29,9 @@ public class GUIGravarFormas extends JFrame {
 
 
         tglBtnGravacao = new JToggleButton("Iniciar/Parar Grava\u00E7\u00E3o");
-        tglBtnGravacao.setBounds(150, 26, 178, 34);
+        tglBtnGravacao.setBounds(150, 29, 178, 34);
         tglBtnGravacao.addActionListener(e -> handleGravacao());
         getContentPane().add(tglBtnGravacao);
-
-        btnReproducao = new JButton("Iniciar Reprodu\u00E7\u00E3o");
-        btnReproducao.setBounds(150, 89, 178, 34);
-        btnReproducao.addActionListener(e -> handleReproducao());
-        getContentPane().add(btnReproducao);
 
         JScrollPane scrollPaneRcvMsg = new JScrollPane();
         scrollPaneRcvMsg.setBounds(40, 171, 394, 189);
@@ -50,6 +44,12 @@ public class GUIGravarFormas extends JFrame {
         JLabel mensagensGravadas = new JLabel("Logs");
         mensagensGravadas.setBounds(40, 148, 164, 13);
         getContentPane().add(mensagensGravadas);
+        
+        btnReproducao = new JButton("Iniciar Reprodução");
+        btnReproducao.addActionListener(e -> handleReproducao());
+        btnReproducao.setEnabled(false);
+        btnReproducao.setBounds(150, 85, 178, 34);
+        getContentPane().add(btnReproducao);
 
         setSize(493, 450);
 
@@ -66,11 +66,6 @@ public class GUIGravarFormas extends JFrame {
         menuNovo = new JMenuItem("Novo");
         menuNovo.addActionListener(e -> handleNovo());
         menuFicheiro.add(menuNovo);
-
-        menuVerConteudo = new JMenuItem("Ver conteudo");
-        menuVerConteudo.addActionListener(e -> handleVerConteudos());
-        menuFicheiro.add(menuVerConteudo);
-        menuVerConteudo.setEnabled(false);
         setVisible(false);
         setResizable(false);
 
@@ -79,6 +74,7 @@ public class GUIGravarFormas extends JFrame {
     private void myInit() {
         gravador = new GravarFormas(this);
         gravador.start();
+        tglBtnGravacao.setEnabled(false);
     }
 
     private void handleAbrir() {
@@ -87,35 +83,31 @@ public class GUIGravarFormas extends JFrame {
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             filename = chooser.getSelectedFile().getAbsolutePath();
             gravador.novoFicheiro(filename);
-            menuVerConteudo.setEnabled(true);
+            tglBtnGravacao.setEnabled(true);
+            btnReproducao.setEnabled(true);
         }
     }
 
     private void handleNovo() {
         filename = JOptionPane.showInputDialog("Intruduza o nome e a extensão do ficheiro.");
         gravador.novoFicheiro(filename);
-    }
-
-    private void handleVerConteudos() {
-
+        tglBtnGravacao.setEnabled(true);
     }
 
     private void handleGravacao() {
         if (tglBtnGravacao.isSelected()) {
-            btnReproducao.setEnabled(false);
             gravador.gravar(true);
-            gravador.setEstadoGravador(EstadoGravador.GRAVAR);
-        } else {           
-            btnReproducao.setEnabled(true);
+        } else {
+        	tglBtnGravacao.setEnabled(false);
+        	btnReproducao.setEnabled(true);
             gravador.gravar(false);
-            gravador.setEstadoGravador(EstadoGravador.PARADO);
+            gravador.setEstado(EstadoGravador.GRAVAR);
         }
     }
 
     private void handleReproducao() {
-        gravador.setEstadoGravador(EstadoGravador.REPRODUZIR);
-        btnReproducao.setEnabled(false);
-        tglBtnGravacao.setEnabled(false);
+        btnReproducao.setEnabled(false);     
+        gravador.setEstado(EstadoGravador.REPRODUZIR);
     }
 
     public void log(String msg) {
@@ -132,10 +124,4 @@ public class GUIGravarFormas extends JFrame {
     public void mostrarGUI(boolean value) {
         setVisible(value);
     }
-    
-    public void acabouReproducao() {
-    	btnReproducao.setEnabled(true);
-        tglBtnGravacao.setEnabled(true);
-    }
-
 }

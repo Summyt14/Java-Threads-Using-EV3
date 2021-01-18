@@ -41,11 +41,16 @@ public class ClienteDoRobot {
 
     public void escreverBuffer(Mensagem msg) {
         try {
+        	// Enviar msg para o gravador
             gf.adicionarMensagem(msg);
             if (buffer == null) throw new InterruptedException();
             buffer.put(msg);
         } catch (InterruptedException e) {
             System.err.println("Problemas no buffer. Não foi enviada a mensagem " + msg);
         }
+    }
+    
+    public void setBuffer(IBufferCircular<Mensagem> buffer) {
+    	this.buffer = buffer;
     }
 }

@@ -22,7 +22,7 @@ public class DesenharQuadrado extends Comportamento {
                 getCliente().parar(false);
                 getCliente().curvaEsq(raio, angulo);
                 getCliente().parar(false);
-                setEspera(dist);
+                setEspera(dist + 13.75f);
             }
 
         } else {
@@ -31,7 +31,7 @@ public class DesenharQuadrado extends Comportamento {
                 getCliente().parar(false);
                 getCliente().curvaDir(raio, angulo);
                 getCliente().parar(false);
-                setEspera(dist);
+                setEspera(dist + 13.75f);
             }
         }
     }

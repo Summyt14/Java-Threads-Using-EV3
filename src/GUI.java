@@ -250,6 +250,7 @@ public class GUI extends JFrame {
         try {
             guiBuffer = new BufferCircularGUI(MAX_BUFFER_SIZE);
             buffer = new BufferCircularMonitores<>(MAX_BUFFER_SIZE, guiBuffer);
+            clienteDoRobot.setBuffer(buffer);
         } catch (Exception e) {
             e.printStackTrace();
             if (this.guiBuffer != null) {
@@ -295,8 +296,10 @@ public class GUI extends JFrame {
             robotDesenhador.desconectar();
         if (guiRD != null)
             guiRD.dispose();
-        if (guiSpy != null)
-        	guiSpy.dispose();
+        if (guiSpy != null){
+            guiSpy.dispose();
+            guiSpy.getGravador().setEndApp();
+        }
         if (guiBuffer != null)
             guiBuffer.dispose();
         if (servidorDoRobot != null)
@@ -379,7 +382,7 @@ public class GUI extends JFrame {
             }
         }
     }
-
+    
     public static void main(String[] args) {
         GUI gui = new GUI();
         gui.run();
