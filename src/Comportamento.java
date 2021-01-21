@@ -5,10 +5,10 @@ public abstract class Comportamento extends Thread {
 	private static float velocidadeLinear = 22.0f;
 	private boolean isLadoEsq;
 	private ClienteDoRobot clienteDoRobot;
-	private GUI gui;
+	private IGUI gui;
 	private Semaphore smpEstado;
 
-	public Comportamento(boolean isLadoEsq, ClienteDoRobot clienteDoRobot, GUI gui) {
+	public Comportamento(boolean isLadoEsq, ClienteDoRobot clienteDoRobot, IGUI gui) {
 		this.isLadoEsq = isLadoEsq;
 		this.clienteDoRobot = clienteDoRobot;
 		this.gui = gui;
@@ -37,6 +37,10 @@ public abstract class Comportamento extends Thread {
 
 	public void setLadoEsq(boolean value) {
 		this.isLadoEsq = value;
+	}
+
+	public IGUI getGUI(){
+		return this.gui;
 	}
 
 	public abstract void desenho() throws InterruptedException;

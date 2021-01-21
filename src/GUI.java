@@ -14,7 +14,7 @@ import java.util.concurrent.Semaphore;
 import javax.swing.border.EtchedBorder;
 
 
-public class GUI extends JFrame {
+public class GUI extends JFrame implements IGUI{
     /**
 	 * 
 	 */
@@ -35,7 +35,7 @@ public class GUI extends JFrame {
     private ServidorDoRobot servidorDoRobot;
     private RobotDesenhador robotDesenhador;
     private ClienteDoRobot clienteDoRobot;
-    private GUIRobotDesenhador guiRD;
+    private GUIServidor guiRD;
     private GUIGravarFormas guiSpy;
     private DesenharQuadrado quadrado;
     private DesenharCirculo circulo;
@@ -179,6 +179,7 @@ public class GUI extends JFrame {
         rdbtnCurvarDireita.setActionCommand("1");
         group.add(rdbtnCurvarEsq);
         group.add(rdbtnCurvarDireita);
+        btnGUIDesenhador.setEnabled(false);
 
         guiSpy = new GUIGravarFormas();
         clienteDoRobot = new ClienteDoRobot(buffer, guiSpy.getGravador());
@@ -261,11 +262,10 @@ public class GUI extends JFrame {
 
     private void handleCreateServer() {
         if (textFieldNomeRobot.getText().trim().equals("")) return;
-        guiRD = new GUIRobotDesenhador();
-        robotDesenhador = new RobotDesenhador(textFieldNomeRobot.getText().trim(), guiRD);
-        servidorDoRobot = new ServidorDoRobot(buffer, robotDesenhador);
+        servidorDoRobot = new ServidorDoRobot(buffer);
         servidorDoRobot.start();
         btnCriaBufferEServidor.setEnabled(false);
+        btnGUIDesenhador.setEnabled(true);
     }
 
     private void handleIniciarRobot() {
@@ -282,13 +282,21 @@ public class GUI extends JFrame {
             chckbxIniciaRobot.setSelected(false);
             return;
         }
-
+        
+        if (robotDesenhador == null) {
+            robotDesenhador = new RobotDesenhador(textFieldNomeRobot.getText().trim());
+            servidorDoRobot.setRobotDesenhador(robotDesenhador);
+        }
+        
         robotDesenhador.setNome(textFieldNomeRobot.getText().trim());
 
-        if (chckbxIniciaRobot.isSelected())
+        if (chckbxIniciaRobot.isSelected()) {
             robotDesenhador.conectar();
-        else
+            guiSpy.getGravador().setRobot(robotDesenhador);
+        }
+        else {
             robotDesenhador.desconectar();
+        }
     }
 
     private void handleClosing() {
@@ -326,14 +334,12 @@ public class GUI extends JFrame {
     }
 
     private void handleGUIDesenhador() {
-        if (robotDesenhador == null) {
-            String msg = "Tem de criar o buffer e o servidor antes de visualizar a GUI do robot desenhador.";
-            JOptionPane.showMessageDialog(null, msg, "Erro", JOptionPane.ERROR_MESSAGE);
-            chckbxIniciaRobot.setSelected(false);
-            return;
+    	if (robotDesenhador == null) {
+            robotDesenhador = new RobotDesenhador(textFieldNomeRobot.getText().trim());
+            servidorDoRobot.setRobotDesenhador(robotDesenhador);
         }
-
-        robotDesenhador.mostrarGUI(!toggleGUIRD);
+    	
+        robotDesenhador.getGUI().setVisible(!toggleGUISpy);
     }
 
     private void handleAtivarEspiao() {
@@ -381,10 +387,5 @@ public class GUI extends JFrame {
                 e.printStackTrace();
             }
         }
-    }
-    
-    public static void main(String[] args) {
-        GUI gui = new GUI();
-        gui.run();
     }
 }

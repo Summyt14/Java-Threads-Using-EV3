@@ -1,4 +1,6 @@
 import javax.swing.*;
+
+import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -114,8 +116,27 @@ public class GUIGravarFormas extends JFrame {
         Date dNow = new Date();
         SimpleDateFormat ft = new SimpleDateFormat("hh:mm:ss");
         String log = "<" + ft.format(dNow) + "> " + msg + "\n";
-        txtAreaMsgGravadas.append(log);
+        showRcvMsg(log);
     }
+
+    public void showRcvMsg(String rcvd) {
+		Runnable r = new Runnable() {
+			@Override
+			public void run() {
+                txtAreaMsgGravadas.append(rcvd);
+            }
+		};
+
+		if (SwingUtilities.isEventDispatchThread()) {
+			r.run();
+		} else {
+			try {
+				SwingUtilities.invokeAndWait(r);
+			} catch (InvocationTargetException | InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+	}
 
     public GravarFormas getGravador() {
         return gravador;

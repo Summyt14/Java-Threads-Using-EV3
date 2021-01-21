@@ -1,33 +1,50 @@
 import Buffer.IBufferCircular;
 
 public class ServidorDoRobot extends Thread {
-    private IBufferCircular<Mensagem> buffer;
+	private IBufferCircular<Mensagem> buffer;
+	private boolean endApp;
+    private GUIServidor guiServidor;
     private RobotDesenhador robotDesenhador;
-    private boolean endApp;
 
-    public ServidorDoRobot(IBufferCircular<Mensagem> buffer, RobotDesenhador robotDesenhador) {
-        this.buffer = buffer;
-        this.robotDesenhador = robotDesenhador;
-        endApp = false;
+	public ServidorDoRobot(IBufferCircular<Mensagem> buffer) {
+		this.buffer = buffer;
+		this.guiServidor = new GUIServidor("Servidor");
+		guiServidor.setVisible(true);
+		this.robotDesenhador = null;
+		endApp = false;
+	}
+
+	public void setEnd() {
+		this.endApp = true;
+	}
+	
+	public void setRobotDesenhador(RobotDesenhador robotDesenhador) {
+		this.robotDesenhador = robotDesenhador;
+	}
+
+    public void mostrarGUI(boolean value) {
+    	guiServidor.setVisible(value);
     }
 
-    public void setEnd() {
-        this.endApp = true;
-    }
+	@Override
+	public void run() {
+		for (;;) {
+			try {
+				Thread.sleep(10);
+				if (this.endApp)
+					break;
 
-    @Override
-    public void run() {
-        for (; ; ) {
-            try {
-            	Thread.sleep(10);
-                if (this.endApp)
-                    break;
+				Mensagem m = buffer.get();
+				guiServidor.log("Buffer: " + m.toString());
+				
+				if (robotDesenhador != null) {
+					robotDesenhador.desenhar(m);
+					guiServidor.log("Robot Desenhador: " + m.toString());
+				}
 
-                robotDesenhador.desenhar(buffer.get());
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
 }

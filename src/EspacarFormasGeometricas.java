@@ -3,7 +3,7 @@ public class EspacarFormasGeometricas extends Comportamento{
 
     private int distancia;
 
-    public EspacarFormasGeometricas(int distancia, ClienteDoRobot clienteDoRobot, GUI gui){
+    public EspacarFormasGeometricas(int distancia, ClienteDoRobot clienteDoRobot, IGUI gui){
         super(false, clienteDoRobot, gui);
         this.distancia = distancia;
     }

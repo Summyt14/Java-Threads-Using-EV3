@@ -30,5 +30,4 @@ public class GUILaunch {
 
 		r.getWindow().run();
 	}
-
 }

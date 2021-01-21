@@ -2,11 +2,9 @@ public class DesenharCirculo extends Comportamento {
 
     private int raio = 35;
     private int angulo = 360;
-    private GUI gui;
 
-    public DesenharCirculo(boolean isLadoEsq, ClienteDoRobot clienteDoRobot, GUI gui) {
+    public DesenharCirculo(boolean isLadoEsq, ClienteDoRobot clienteDoRobot, IGUI gui) {
         super(isLadoEsq, clienteDoRobot, gui);
-        this.gui = gui;
     }
 
     public int getDistancia() {
@@ -18,7 +16,7 @@ public class DesenharCirculo extends Comportamento {
     }
 
     public void desenho() {
-        raio = gui.getDist();
+        raio = getGUI().getDist();
         if (isLadoEsq())
             getCliente().curvaEsq(raio, angulo);
         else

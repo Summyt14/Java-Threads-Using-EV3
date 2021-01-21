@@ -3,11 +3,9 @@ public class DesenharQuadrado extends Comportamento {
     private int angulo = 91;
     private int raio = 0;
     private int dist;
-    private GUI gui;
 
-    public DesenharQuadrado(boolean isLadoEsq, ClienteDoRobot clienteDoRobot, GUI gui) {
+    public DesenharQuadrado(boolean isLadoEsq, ClienteDoRobot clienteDoRobot, IGUI gui) {
         super(isLadoEsq, clienteDoRobot, gui);
-        this.gui = gui;
     }
 
     public int getDistancia() {
@@ -15,7 +13,7 @@ public class DesenharQuadrado extends Comportamento {
     }
 
     public void desenho() {
-        dist = gui.getDist();
+        dist = getGUI().getDist();
         if (isLadoEsq()) {
             for (int i = 0; i < 4; i++) {
                 getCliente().reta(dist);

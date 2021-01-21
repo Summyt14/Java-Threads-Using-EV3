@@ -1,25 +1,25 @@
 public class RobotDesenhador {
     private RobotLegoEV3 robot;
+    private GUIServidor gui;
     private String nome;
     private boolean conectado;
-    private GUIRobotDesenhador guiDesenhador;
 
-    public RobotDesenhador(String nome, GUIRobotDesenhador guiDesenhador) {
+    public RobotDesenhador(String nome) {
         this.nome = nome;
-        this.guiDesenhador = guiDesenhador;
+        this.gui = new GUIServidor("Robot Desenhador");
     }
 
     public void setNome(String nome) {
         this.nome = nome;
     }
+    
+    public GUIServidor getGUI() {
+    	return gui;
+    }
 
     public void desenhar(Mensagem msg) {
         if (conectado) msg.executarComando(robot);
-        guiDesenhador.log(msg.toString());
-    }
-
-    public void mostrarGUI(boolean value) {
-        guiDesenhador.setVisible(value);
+        gui.log(msg.toString());
     }
 
     public void conectar() {
@@ -27,7 +27,7 @@ public class RobotDesenhador {
         conectado = robot.OpenEV3(nome);
         if (conectado) {
             String msg = "Robot " + nome + " conectado!";
-            guiDesenhador.log(msg);
+            gui.log(msg);
             System.out.println(msg);
         }
     }
@@ -35,7 +35,7 @@ public class RobotDesenhador {
     public void desconectar() {
         robot.CloseEV3();
         String msg = "Robot " + nome + " desconectado!";
-        guiDesenhador.log(msg);
+        gui.log(msg);
         System.out.println(msg);
     }
 

@@ -18,9 +18,11 @@ public class GravarFormas extends Thread {
 	private EstadoGravador estadoGravador;
 	private Semaphore smp;
 	private boolean endApp;
+	private RobotDesenhador robotDesenhador;
 
 	public GravarFormas(GUIGravarFormas guiGF) {
 		this.guiGF = guiGF;
+		this.robotDesenhador = null;
 		this.endApp = false;
 		arrMensagens = new ArrayList<Mensagem>();
 		esperas = new ArrayList<Integer>();
@@ -39,6 +41,10 @@ public class GravarFormas extends Thread {
 	public void setEstado(EstadoGravador estado) {
 		estadoGravador = estado;
 		smp.release();
+	}
+	
+	public void setRobot(RobotDesenhador robotDesenhador) {
+		this.robotDesenhador = robotDesenhador;
 	}
 
 	public void novoFicheiro(String filename) {
@@ -104,7 +110,8 @@ public class GravarFormas extends Thread {
 				if (count % 2 == 0) {
 					Mensagem m = (Mensagem) o;
 					guiGF.log("Lido: " + m.toString());
-					// m.executarComando(r);
+					if (robotDesenhador != null)
+						robotDesenhador.desenhar(m);
 
 				} else {
 					int espera = (int) o;
@@ -120,6 +127,7 @@ public class GravarFormas extends Thread {
 				count++;
 
 			}
+			guiGF.log("ACABOU!");
 			in.close();
 		} catch (IOException | ClassNotFoundException e) {
 			e.printStackTrace();
