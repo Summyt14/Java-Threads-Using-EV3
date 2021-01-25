@@ -37,6 +37,7 @@ public class RobotDesenhador {
         String msg = "Robot " + nome + " desconectado!";
         gui.log(msg);
         System.out.println(msg);
+        gui.dispose();
     }
 
     public boolean isConectado() {

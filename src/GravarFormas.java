@@ -9,12 +9,10 @@ public class GravarFormas extends Thread {
 	private String filename = "";
 	private File file;
 	private GUIGravarFormas guiGF;
-	private boolean btnGravar;
 	private ObjectOutputStream out;
 	private ObjectInputStream in;
 	private Timestamp tsAntes, tsAgora;
-	private ArrayList<Mensagem> arrMensagens;
-	private ArrayList<Integer> esperas;
+	private ArrayList<Object> arrMensagens;
 	private EstadoGravador estadoGravador;
 	private Semaphore smp;
 	private boolean endApp;
@@ -22,16 +20,10 @@ public class GravarFormas extends Thread {
 
 	public GravarFormas(GUIGravarFormas guiGF) {
 		this.guiGF = guiGF;
-		this.robotDesenhador = null;
 		this.endApp = false;
-		arrMensagens = new ArrayList<Mensagem>();
-		esperas = new ArrayList<Integer>();
+		arrMensagens = new ArrayList<Object>();
 		estadoGravador = EstadoGravador.PARADO;
 		smp = new Semaphore(0);
-	}
-
-	public void gravar(boolean value) {
-		btnGravar = value;
 	}
 
 	public String getFicheiro() {
@@ -42,7 +34,7 @@ public class GravarFormas extends Thread {
 		estadoGravador = estado;
 		smp.release();
 	}
-	
+
 	public void setRobot(RobotDesenhador robotDesenhador) {
 		this.robotDesenhador = robotDesenhador;
 	}
@@ -55,28 +47,18 @@ public class GravarFormas extends Thread {
 	}
 
 	public void adicionarMensagem(Mensagem m) {
-
-		if (btnGravar) {
-
-			if (arrMensagens.size() < 1) {
-				tsAntes = new Timestamp(System.currentTimeMillis());
-			}
-
+		if (estadoGravador == EstadoGravador.GRAVAR) {
 			tsAgora = new Timestamp(System.currentTimeMillis());
 			long espera = tsAgora.getDateTime() - tsAntes.getDateTime();
 
-			if (espera >= 50) {
-				guiGF.log("Espera: " + espera);
-				esperas.add(((int) espera));
-			} else {
-				esperas.add(1);
-			}
-
 			tsAntes = tsAgora;
-
 			arrMensagens.add(m);
-
 			guiGF.log("Guardado: " + m.toString());
+			
+			espera = espera == 0 ? 1 : espera;
+			
+			guiGF.log("Guardado: Espera = " + espera  + "\n");
+			arrMensagens.add(((int) espera));
 		}
 	}
 
@@ -86,14 +68,12 @@ public class GravarFormas extends Thread {
 				out = new ObjectOutputStream(new FileOutputStream(file));
 
 			while (arrMensagens.size() > 0) {
-				Mensagem m = arrMensagens.remove(0);
-				int espera = esperas.remove(0);
-				out.writeObject(m);
-				out.writeObject(espera);
+				out.writeObject(arrMensagens.remove(0));
 			}
 			out.writeObject(null);
 			out.flush();
 			out.close();
+			guiGF.log("MENSAGENS ESCRITAS NO FICHEIRO!\n");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -109,29 +89,48 @@ public class GravarFormas extends Thread {
 
 				if (count % 2 == 0) {
 					Mensagem m = (Mensagem) o;
+					arrMensagens.add(m);
 					guiGF.log("Lido: " + m.toString());
-					if (robotDesenhador != null)
-						robotDesenhador.desenhar(m);
-
 				} else {
 					int espera = (int) o;
-					if (espera > 1) {
-						guiGF.log("Lido: Espera: " + espera);
-						try {
-							Thread.sleep(espera);
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						}
-					}
+					arrMensagens.add(espera);
+					guiGF.log("Lido: Espera: " + espera);		
 				}
 				count++;
-
 			}
-			guiGF.log("ACABOU!");
+			guiGF.log("ACABOU DE LER DO FICHEIRO!\n");
 			in.close();
 		} catch (IOException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public void reproduzirMensagens() {
+		
+		for (int i = 0; i < arrMensagens.size(); i++) {
+
+			if (i % 2 == 0) {
+				Mensagem m = (Mensagem) arrMensagens.get(i);
+				if (robotDesenhador != null)
+					robotDesenhador.desenhar(m);
+				guiGF.log("Reproduzido: " + m);
+			} else {
+				try {
+					int espera = (int) arrMensagens.get(i);
+					guiGF.log("Reproduzido: Espera: " + espera + "\n");
+					Thread.sleep(espera);
+
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		guiGF.log("ACABOU DE REPRODUZIR!\n");
+	}
+
+	public void setEndApp() {
+		this.endApp = true;
+		smp.release();
 	}
 
 	@Override
@@ -144,24 +143,27 @@ public class GravarFormas extends Thread {
 			case PARADO:
 				try {
 					smp.acquire();
+					tsAntes = new Timestamp(System.currentTimeMillis());
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 				break;
 			case GRAVAR:
+				break;
+			case ESCREVER:
 				guardarMensagens();
 				estadoGravador = EstadoGravador.PARADO;
 				break;
-			case REPRODUZIR:
+			case LER:
 				lerMensagens();
+				estadoGravador = EstadoGravador.PARADO;
+				break;
+			case REPRODUZIR:
+				reproduzirMensagens();
+				guiGF.ligarBtnReproducao();
 				estadoGravador = EstadoGravador.PARADO;
 				break;
 			}
 		}
 	}
-
-	public void setEndApp() {
-		this.endApp = true;
-	}
-
 }

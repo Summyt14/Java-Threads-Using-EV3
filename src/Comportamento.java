@@ -1,4 +1,3 @@
-import java.util.concurrent.Semaphore;
 
 public abstract class Comportamento extends Thread {
 
@@ -6,13 +5,15 @@ public abstract class Comportamento extends Thread {
 	private boolean isLadoEsq;
 	private ClienteDoRobot clienteDoRobot;
 	private IGUI gui;
-	private Semaphore smpEstado;
+	private Estado estado;
+	private Comportamento proxComportamento;
+	private boolean endApp;
 
 	public Comportamento(boolean isLadoEsq, ClienteDoRobot clienteDoRobot, IGUI gui) {
 		this.isLadoEsq = isLadoEsq;
 		this.clienteDoRobot = clienteDoRobot;
 		this.gui = gui;
-		smpEstado = new Semaphore(0);
+		estado = Estado.PARADO;
 	}
 
 	public boolean isLadoEsq() {
@@ -31,16 +32,25 @@ public abstract class Comportamento extends Thread {
 		}
 	}
 
-	public void ativar() {
-		smpEstado.release();
+	public void ativar(Comportamento c) {
+		proxComportamento = c;
+		estado = Estado.ATIVO;
 	}
 
 	public void setLadoEsq(boolean value) {
 		this.isLadoEsq = value;
 	}
 
-	public IGUI getGUI(){
+	public IGUI getGUI() {
 		return this.gui;
+	}
+	
+	public void setEnd(){
+		this.endApp = true;
+	}
+	
+	public Comportamento getProxComportamento() {
+		return proxComportamento;
 	}
 
 	public abstract void desenho() throws InterruptedException;
@@ -50,18 +60,28 @@ public abstract class Comportamento extends Thread {
 	@Override
 	public void run() {
 		for (;;) {
-			try {
-				smpEstado.acquire();
+			if (endApp)
+				break;			
+			switch (estado) {
+			case PARADO:
+				try {
+					Thread.sleep(10);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				break;
+			case ATIVO:
 				try {
 					gui.getMutex().acquire();
 					desenho();
-					gui.acabeiDesenho();
+					if (!(this instanceof EspacarFormasGeometricas))
+						gui.acabeiDesenho();
 					gui.getMutex().release();
+					estado = Estado.PARADO;
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-			} catch (Exception e) {
-				e.printStackTrace();
+				break;
 			}
 		}
 	}

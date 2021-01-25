@@ -13,379 +13,373 @@ import java.awt.event.WindowEvent;
 import java.util.concurrent.Semaphore;
 import javax.swing.border.EtchedBorder;
 
-
-public class GUI extends JFrame implements IGUI{
-    /**
+public class GUI extends JFrame implements IGUI {
+	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 8502496328362365351L;
 	private JTextField textFieldNomeRobot;
-    private JCheckBox chckbxIniciaRobot;
-    private JButton btnCriaBufferEServidor;
-    private JButton btnGUIDesenhador;
-    private JButton btnQuadrado;
-    private JButton btnCirculo;
-    private ButtonGroup group;
-    private JRadioButton rdbtnCurvarEsq;
-    private JRadioButton rdbtnCurvarDireita;
-    private JSpinner spinnerLado;
-    private JSpinner spinnerRaio;
-    private JSpinner spinnerDeltaAng;
+	private JCheckBox chckbxIniciaRobot;
+	private JButton btnCriaBufferEServidor;
+	private JButton btnGUIDesenhador;
+	private JButton btnQuadrado;
+	private JButton btnCirculo;
+	private ButtonGroup group;
+	private JRadioButton rdbtnCurvarEsq;
+	private JRadioButton rdbtnCurvarDireita;
+	private JSpinner spinnerLado;
+	private JSpinner spinnerRaio;
+	private JSpinner spinnerDeltaAng;
 
-    private ServidorDoRobot servidorDoRobot;
-    private RobotDesenhador robotDesenhador;
-    private ClienteDoRobot clienteDoRobot;
-    private GUIServidor guiRD;
-    private GUIGravarFormas guiSpy;
-    private DesenharQuadrado quadrado;
-    private DesenharCirculo circulo;
-    private EspacarFormasGeometricas espacamento;
+	private ServidorDoRobot servidorDoRobot;
+	private RobotDesenhador robotDesenhador;
+	private ClienteDoRobot clienteDoRobot;
+	private GUIServidor guiRD;
+	private GUIGravarFormas guiSpy;
+	private DesenharQuadrado quadrado;
+	private DesenharCirculo circulo;
+	private EspacarFormasGeometricas espacamento;
 
-    private boolean endApp = false;
-    private boolean toggleGUIRD = false;
-    private boolean toggleGUISpy = false;
-    private boolean ladoEsq;
-    private boolean acabouDesenho;
-    private IBufferCircularGUI guiBuffer;
-    private IBufferCircular<Mensagem> buffer;
-    private final static int MAX_BUFFER_SIZE = 16;
-    private int dist = 0;
-    private Semaphore mutex;
-    private Semaphore esperaDesenho;
+	private boolean endApp = false;
+	private boolean toggleGUISpy = false;
+	private boolean ladoEsq;
+	private boolean acabouDesenho;
+	private IBufferCircularGUI guiBuffer;
+	private IBufferCircular<Mensagem> buffer;
+	private final static int MAX_BUFFER_SIZE = 16;
+	private int dist = 0;
+	private Semaphore mutex;
 
-    public GUI() {
-        initialize();
-        myInit();
-    }
+	public GUI() {
+		initialize();
+		myInit();
+	}
 
-    private void initialize() {
-        setTitle("Trabalho 2");
-        setResizable(false);
-        getContentPane().setLayout(null);
+	private void initialize() {
+		setTitle("Trabalho 2");
+		setResizable(false);
+		getContentPane().setLayout(null);
 
-        btnCriaBufferEServidor = new JButton("Criar buffer e servidor");
-        btnCriaBufferEServidor.addActionListener(e -> {
-            handleCriarBuffer();
-            handleCreateServer();
-        });
-        btnCriaBufferEServidor.setBounds(282, 203, 290, 29);
-        getContentPane().add(btnCriaBufferEServidor);
+		btnCriaBufferEServidor = new JButton("Criar buffer e servidor");
+		btnCriaBufferEServidor.addActionListener(e -> {
+			handleCriarBuffer();
+			handleCreateServer();
+		});
+		btnCriaBufferEServidor.setBounds(282, 203, 290, 29);
+		getContentPane().add(btnCriaBufferEServidor);
 
-        btnGUIDesenhador = new JButton("Mostrar GUI Robot Desenhador");
-        btnGUIDesenhador.addActionListener(e -> {
-            handleGUIDesenhador();
-        });
-        btnGUIDesenhador.setBounds(282, 239, 290, 29);
-        getContentPane().add(btnGUIDesenhador);
+		btnGUIDesenhador = new JButton("Mostrar GUI Robot Desenhador");
+		btnGUIDesenhador.addActionListener(e -> {
+			handleGUIDesenhador();
+		});
+		btnGUIDesenhador.setBounds(282, 239, 290, 29);
+		getContentPane().add(btnGUIDesenhador);
 
-        JLabel lblNomeRobot = new JLabel("Nome do Robot");
-        lblNomeRobot.setBounds(282, 9, 125, 16);
-        getContentPane().add(lblNomeRobot);
+		JLabel lblNomeRobot = new JLabel("Nome do Robot");
+		lblNomeRobot.setBounds(282, 9, 125, 16);
+		getContentPane().add(lblNomeRobot);
 
-        textFieldNomeRobot = new JTextField("EV1");
-        textFieldNomeRobot.setBounds(282, 35, 290, 26);
-        getContentPane().add(textFieldNomeRobot);
-        textFieldNomeRobot.setColumns(10);
+		textFieldNomeRobot = new JTextField("EV1");
+		textFieldNomeRobot.setBounds(282, 35, 290, 26);
+		getContentPane().add(textFieldNomeRobot);
+		textFieldNomeRobot.setColumns(10);
 
-        JPanel panelComportamentos = new JPanel();
-        panelComportamentos.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null),
-                "Comportamentos", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
-        panelComportamentos.setBounds(16, 11, 249, 260);
-        getContentPane().add(panelComportamentos);
-        panelComportamentos.setLayout(null);
+		JPanel panelComportamentos = new JPanel();
+		panelComportamentos.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null),
+				"Comportamentos", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+		panelComportamentos.setBounds(16, 11, 249, 260);
+		getContentPane().add(panelComportamentos);
+		panelComportamentos.setLayout(null);
 
-        btnQuadrado = new JButton("Desenhar Quadrado");
-        btnQuadrado.setBounds(6, 16, 237, 53);
-        panelComportamentos.add(btnQuadrado);
-        btnQuadrado.addActionListener(e -> handleDesenharQuadrado());
+		btnQuadrado = new JButton("Desenhar Quadrado");
+		btnQuadrado.setBounds(6, 16, 237, 53);
+		panelComportamentos.add(btnQuadrado);
+		btnQuadrado.addActionListener(e -> handleDesenharQuadrado());
 
-        btnCirculo = new JButton("Desenhar Circulo");
-        btnCirculo.setBounds(6, 69, 237, 53);
-        btnCirculo.addActionListener(e -> handleDesenharCirculo());
-        panelComportamentos.add(btnCirculo);
+		btnCirculo = new JButton("Desenhar Circulo");
+		btnCirculo.setBounds(6, 69, 237, 53);
+		btnCirculo.addActionListener(e -> handleDesenharCirculo());
+		panelComportamentos.add(btnCirculo);
 
-        rdbtnCurvarEsq = new JRadioButton("Curvar Esquerda");
-        rdbtnCurvarEsq.setBounds(6, 122, 131, 43);
-        panelComportamentos.add(rdbtnCurvarEsq);
+		rdbtnCurvarEsq = new JRadioButton("Curvar Esquerda");
+		rdbtnCurvarEsq.setBounds(6, 122, 131, 43);
+		panelComportamentos.add(rdbtnCurvarEsq);
 
-        rdbtnCurvarDireita = new JRadioButton("Curvar Direita");
-        rdbtnCurvarDireita.setBounds(139, 122, 104, 43);
-        panelComportamentos.add(rdbtnCurvarDireita);
+		rdbtnCurvarDireita = new JRadioButton("Curvar Direita");
+		rdbtnCurvarDireita.setBounds(139, 122, 104, 43);
+		panelComportamentos.add(rdbtnCurvarDireita);
 
-        spinnerLado = new JSpinner();
-        spinnerLado.setModel(new SpinnerNumberModel(30, 20, 60, 1));
-        spinnerLado.setBounds(55, 180, 51, 20);
-        panelComportamentos.add(spinnerLado);
+		spinnerLado = new JSpinner();
+		spinnerLado.setModel(new SpinnerNumberModel(30, 20, 60, 1));
+		spinnerLado.setBounds(55, 180, 51, 20);
+		panelComportamentos.add(spinnerLado);
 
-        spinnerRaio = new JSpinner();
-        spinnerRaio.setModel(new SpinnerNumberModel(35, 0, 360, 1));
-        spinnerRaio.setBounds(142, 180, 51, 20);
-        panelComportamentos.add(spinnerRaio);
+		spinnerRaio = new JSpinner();
+		spinnerRaio.setModel(new SpinnerNumberModel(35, 0, 360, 1));
+		spinnerRaio.setBounds(142, 180, 51, 20);
+		panelComportamentos.add(spinnerRaio);
 
-        JLabel lblLado = new JLabel("Lado");
-        lblLado.setHorizontalAlignment(SwingConstants.CENTER);
-        lblLado.setBounds(55, 161, 51, 17);
-        panelComportamentos.add(lblLado);
+		JLabel lblLado = new JLabel("Lado");
+		lblLado.setHorizontalAlignment(SwingConstants.CENTER);
+		lblLado.setBounds(55, 161, 51, 17);
+		panelComportamentos.add(lblLado);
 
-        JLabel lblRaio = new JLabel("Raio");
-        lblRaio.setHorizontalAlignment(SwingConstants.CENTER);
-        lblRaio.setBounds(142, 161, 51, 17);
-        panelComportamentos.add(lblRaio);
+		JLabel lblRaio = new JLabel("Raio");
+		lblRaio.setHorizontalAlignment(SwingConstants.CENTER);
+		lblRaio.setBounds(142, 161, 51, 17);
+		panelComportamentos.add(lblRaio);
 
-        JLabel ajusteAnguloTxt = new JLabel("Ajustar ângulo");
-        ajusteAnguloTxt.setHorizontalAlignment(SwingConstants.CENTER);
-        ajusteAnguloTxt.setBounds(6, 224, 104, 17);
-        panelComportamentos.add(ajusteAnguloTxt);
+		JLabel ajusteAnguloTxt = new JLabel("Ajustar angulo");
+		ajusteAnguloTxt.setHorizontalAlignment(SwingConstants.CENTER);
+		ajusteAnguloTxt.setBounds(6, 224, 104, 17);
+		panelComportamentos.add(ajusteAnguloTxt);
 
-        spinnerDeltaAng = new JSpinner();
-        spinnerDeltaAng.setModel(new SpinnerNumberModel(0, -180, 180, 1));
-        spinnerDeltaAng.setBounds(109, 219, 40, 26);
-        panelComportamentos.add(spinnerDeltaAng);
+		spinnerDeltaAng = new JSpinner();
+		spinnerDeltaAng.setModel(new SpinnerNumberModel(0, -180, 180, 1));
+		spinnerDeltaAng.setBounds(109, 219, 40, 26);
+		panelComportamentos.add(spinnerDeltaAng);
 
-        chckbxIniciaRobot = new JCheckBox("Conectar robot");
-        chckbxIniciaRobot.addActionListener(e -> handleIniciarRobot());
-        chckbxIniciaRobot.setBounds(282, 67, 128, 23);
-        getContentPane().add(chckbxIniciaRobot);
+		chckbxIniciaRobot = new JCheckBox("Conectar robot");
+		chckbxIniciaRobot.addActionListener(e -> handleIniciarRobot());
+		chckbxIniciaRobot.setBounds(282, 67, 128, 23);
+		getContentPane().add(chckbxIniciaRobot);
 
-        JButton btnSpyrobot = new JButton("Gravar Figuras");
-        btnSpyrobot.addActionListener(e -> handleAtivarEspiao());
-        btnSpyrobot.setBounds(282, 166, 290, 29);
-        getContentPane().add(btnSpyrobot);
+		JButton btnSpyrobot = new JButton("Gravar Figuras");
+		btnSpyrobot.addActionListener(e -> handleAtivarEspiao());
+		btnSpyrobot.setBounds(282, 166, 290, 29);
+		getContentPane().add(btnSpyrobot);
 
-        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 
-        setSize(600, 332);
-        setVisible(true);
-    }
+		setSize(600, 332);
+		setVisible(true);
+	}
 
-    private void myInit() {
-        addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                // Ask for confirmation before terminating the program.
-                int option = JOptionPane.showConfirmDialog(null, "De certeza que quer fechar a aplicação?",
-                        "Confirmação de fecho", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-                if (option == JOptionPane.YES_OPTION) {
-                    setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-                    handleClosing();
-                }
-            }
-        });
+	private void myInit() {
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				// Ask for confirmation before terminating the program.
+				int option = JOptionPane.showConfirmDialog(null, "De certeza que quer fechar a aplicação?",
+						"Confirmação de fecho", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+				if (option == JOptionPane.YES_OPTION) {
+					setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+					handleClosing();
+				}
+			}
+		});
 
-        // Group the radio buttons.
-        group = new ButtonGroup();
-        rdbtnCurvarEsq.setSelected(true);
-        rdbtnCurvarEsq.setActionCommand("0");
-        rdbtnCurvarDireita.setActionCommand("1");
-        group.add(rdbtnCurvarEsq);
-        group.add(rdbtnCurvarDireita);
-        btnGUIDesenhador.setEnabled(false);
+		// Group the radio buttons.
+		group = new ButtonGroup();
+		rdbtnCurvarEsq.setSelected(true);
+		rdbtnCurvarEsq.setActionCommand("0");
+		rdbtnCurvarDireita.setActionCommand("1");
+		group.add(rdbtnCurvarEsq);
+		group.add(rdbtnCurvarDireita);
+		btnGUIDesenhador.setEnabled(false);
 
-        guiSpy = new GUIGravarFormas();
-        clienteDoRobot = new ClienteDoRobot(buffer, guiSpy.getGravador());
-        criarComportamentos();
-    }
+		guiSpy = new GUIGravarFormas();
+		clienteDoRobot = new ClienteDoRobot(buffer, guiSpy.getGravador());
+		criarComportamentos();
+	}
 
-    private void criarComportamentos() {
-        quadrado = new DesenharQuadrado(true, clienteDoRobot, this);
-        circulo = new DesenharCirculo(true, clienteDoRobot, this);
-        espacamento = new EspacarFormasGeometricas(dist, clienteDoRobot, this);
-        mutex = new Semaphore(1);
+	private void criarComportamentos() {
+		quadrado = new DesenharQuadrado(true, clienteDoRobot, this);
+		circulo = new DesenharCirculo(true, clienteDoRobot, this);
+		espacamento = new EspacarFormasGeometricas(dist, clienteDoRobot, this);
+		mutex = new Semaphore(1);
 
-        quadrado.start();
-        circulo.start();
-        espacamento.start();
-        esperaDesenho = new Semaphore(1);
-    }
+		quadrado.start();
+		circulo.start();
+		espacamento.start();
+	}
 
-    public void adicionarQuadrado() {
-        adicionarEspacamento();
-        try {
-            esperaDesenho.acquire();
-            quadrado.setLadoEsq(ladoEsq);
-            quadrado.setAngulo(90 + (int) spinnerDeltaAng.getValue());
-            quadrado.ativar();
-            clienteDoRobot.setUltimoComportamento(quadrado);
-            acabouDesenho = false;
-            esperaDesenho.release();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+	public void adicionarQuadrado() {
+		quadrado.setLadoEsq(ladoEsq);
+		quadrado.setAngulo(90 + (int) spinnerDeltaAng.getValue());
+		if (clienteDoRobot.getUltimoComportamento() != null) {
+			adicionarEspacamento(quadrado);
+		} else {
+			quadrado.ativar(null);
+		}
 
-    public void adicionarCirculo() {
-        adicionarEspacamento();
-        try {
-            esperaDesenho.acquire();
-            circulo.setLadoEsq(ladoEsq);
-            circulo.setAngulo(360 + (int) spinnerDeltaAng.getValue());
-            circulo.ativar();
-            clienteDoRobot.setUltimoComportamento(circulo);
-            acabouDesenho = false;
-            esperaDesenho.release();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+		clienteDoRobot.setUltimoComportamento(quadrado);
+		acabouDesenho = false;
+	}
 
-    public void adicionarEspacamento() {
-        if (clienteDoRobot.getUltimoComportamento() != null) {
-            try {
-                esperaDesenho.acquire();
-                espacamento.setDistancia(clienteDoRobot.getUltimoComportamento().getDistancia());
-                espacamento.ativar();
-                esperaDesenho.release();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
+	public void adicionarCirculo() {
+		circulo.setLadoEsq(ladoEsq);
+		circulo.setAngulo(360 + (int) spinnerDeltaAng.getValue());
+		if (clienteDoRobot.getUltimoComportamento() != null) {
+			adicionarEspacamento(circulo);
+		} else {
+			circulo.ativar(null);
+		}
+		clienteDoRobot.setUltimoComportamento(circulo);
+		acabouDesenho = false;
+	}
 
-    private void handleCriarBuffer() {
-        if (textFieldNomeRobot.getText().trim().equals("")) {
-            String msg = "Tem de indicar o nome do robot antes de criar o servidor.";
-            JOptionPane.showMessageDialog(null, msg, "Erro", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
+	public void adicionarEspacamento(Comportamento c) {
+		try {
+			espacamento.setDistancia(clienteDoRobot.getUltimoComportamento().getDistancia());
+			espacamento.ativar(c);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
-        try {
-            guiBuffer = new BufferCircularGUI(MAX_BUFFER_SIZE);
-            buffer = new BufferCircularMonitores<>(MAX_BUFFER_SIZE, guiBuffer);
-            clienteDoRobot.setBuffer(buffer);
-        } catch (Exception e) {
-            e.printStackTrace();
-            if (this.guiBuffer != null) {
-                this.guiBuffer.dispose();
-            }
-        }
-    }
+	private void handleCriarBuffer() {
+		if (textFieldNomeRobot.getText().trim().equals("")) {
+			String msg = "Tem de indicar o nome do robot antes de criar o servidor.";
+			JOptionPane.showMessageDialog(null, msg, "Erro", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		try {
+			guiBuffer = new BufferCircularGUI(MAX_BUFFER_SIZE);
+			buffer = new BufferCircularMonitores<>(MAX_BUFFER_SIZE, guiBuffer);
+			clienteDoRobot.setBuffer(buffer);
+		} catch (Exception e) {
+			e.printStackTrace();
+			if (this.guiBuffer != null) {
+				this.guiBuffer.dispose();
+			}
+		}
+	}
 
-    private void handleCreateServer() {
-        if (textFieldNomeRobot.getText().trim().equals("")) return;
-        servidorDoRobot = new ServidorDoRobot(buffer);
-        servidorDoRobot.start();
-        btnCriaBufferEServidor.setEnabled(false);
-        btnGUIDesenhador.setEnabled(true);
-    }
+	private void handleCreateServer() {
+		if (textFieldNomeRobot.getText().trim().equals(""))
+			return;
+		servidorDoRobot = new ServidorDoRobot(buffer);
+		servidorDoRobot.start();
+		btnCriaBufferEServidor.setEnabled(false);
+		btnGUIDesenhador.setEnabled(true);
+	}
 
-    private void handleIniciarRobot() {
-        if (buffer == null || servidorDoRobot == null) {
-            String msg = "Tem de criar o buffer e o servidor antes de iniciar o robot.";
-            JOptionPane.showMessageDialog(null, msg, "Erro", JOptionPane.ERROR_MESSAGE);
-            chckbxIniciaRobot.setSelected(false);
-            return;
-        }
+	private void handleIniciarRobot() {
+		if (buffer == null || servidorDoRobot == null) {
+			String msg = "Tem de criar o buffer e o servidor antes de iniciar o robot.";
+			JOptionPane.showMessageDialog(null, msg, "Erro", JOptionPane.ERROR_MESSAGE);
+			chckbxIniciaRobot.setSelected(false);
+			return;
+		}
 
-        if (textFieldNomeRobot.getText().trim().equals("")) {
-            String msg = "Tem de indicar o nome do robot antes de o conectar.";
-            JOptionPane.showMessageDialog(null, msg, "Erro", JOptionPane.ERROR_MESSAGE);
-            chckbxIniciaRobot.setSelected(false);
-            return;
-        }
-        
-        if (robotDesenhador == null) {
-            robotDesenhador = new RobotDesenhador(textFieldNomeRobot.getText().trim());
-            servidorDoRobot.setRobotDesenhador(robotDesenhador);
-        }
-        
-        robotDesenhador.setNome(textFieldNomeRobot.getText().trim());
+		if (textFieldNomeRobot.getText().trim().equals("")) {
+			String msg = "Tem de indicar o nome do robot antes de o conectar.";
+			JOptionPane.showMessageDialog(null, msg, "Erro", JOptionPane.ERROR_MESSAGE);
+			chckbxIniciaRobot.setSelected(false);
+			return;
+		}
 
-        if (chckbxIniciaRobot.isSelected()) {
-            robotDesenhador.conectar();
-            guiSpy.getGravador().setRobot(robotDesenhador);
-        }
-        else {
-            robotDesenhador.desconectar();
-        }
-    }
+		if (robotDesenhador == null) {
+			robotDesenhador = new RobotDesenhador(textFieldNomeRobot.getText().trim());
+			servidorDoRobot.setRobotDesenhador(robotDesenhador);
+			guiSpy.getGravador().setRobot(robotDesenhador);
+		}
 
-    private void handleClosing() {
-        if (robotDesenhador != null && robotDesenhador.isConectado())
-            robotDesenhador.desconectar();
-        if (guiRD != null)
-            guiRD.dispose();
-        if (guiSpy != null){
-            guiSpy.dispose();
-            guiSpy.getGravador().setEndApp();
-        }
-        if (guiBuffer != null)
-            guiBuffer.dispose();
-        if (servidorDoRobot != null)
-            servidorDoRobot.setEnd();
-        endApp = true;
-    }
+		robotDesenhador.setNome(textFieldNomeRobot.getText().trim());
 
-    private void handleDesenharCirculo() {
-        if (clienteDoRobot == null) return;
-        btnCirculo.setEnabled(false);
-        btnQuadrado.setEnabled(false);
-        setLadoEsq(rdbtnCurvarEsq.isSelected());
-        setDist((int) spinnerRaio.getValue());
-        adicionarCirculo();
-    }
+		if (chckbxIniciaRobot.isSelected()) {
+			robotDesenhador.conectar();
+			guiSpy.getGravador().setRobot(robotDesenhador);
+		} else {
+			robotDesenhador.desconectar();
+		}
+	}
 
-    private void handleDesenharQuadrado() {
-        if (clienteDoRobot == null) return;
-        btnCirculo.setEnabled(false);
-        btnQuadrado.setEnabled(false);
-        setLadoEsq(rdbtnCurvarEsq.isSelected());
-        setDist((int) spinnerLado.getValue());
-        adicionarQuadrado();
-    }
+	private void handleClosing() {
+		if (robotDesenhador != null && robotDesenhador.isConectado())
+			robotDesenhador.desconectar();
+		if (guiRD != null)
+			guiRD.dispose();
+		if (guiSpy != null) {
+			guiSpy.dispose();
+			guiSpy.getGravador().setEndApp();
+		}
+		if (guiBuffer != null)
+			guiBuffer.dispose();
+		if (servidorDoRobot != null)
+			servidorDoRobot.setEnd();
+		if (circulo != null)
+			circulo.setEnd();
+		if (quadrado != null)
+			quadrado.setEnd();
+		if (espacamento != null)
+			espacamento.setEnd();
 
-    private void handleGUIDesenhador() {
-    	if (robotDesenhador == null) {
-            robotDesenhador = new RobotDesenhador(textFieldNomeRobot.getText().trim());
-            servidorDoRobot.setRobotDesenhador(robotDesenhador);
-        }
-    	
-        robotDesenhador.getGUI().setVisible(!toggleGUISpy);
-    }
+		endApp = true;
+	}
 
-    private void handleAtivarEspiao() {
-        guiSpy.mostrarGUI(!toggleGUISpy);
-    }
+	private void handleDesenharCirculo() {
+		if (clienteDoRobot == null)
+			return;
+		btnCirculo.setEnabled(false);
+		btnQuadrado.setEnabled(false);
+		setLadoEsq(rdbtnCurvarEsq.isSelected());
+		setDist((int) spinnerRaio.getValue());
+		adicionarCirculo();
+	}
 
-    public void acabeiDesenho() {
-        acabouDesenho = true;
-    }
+	private void handleDesenharQuadrado() {
+		if (clienteDoRobot == null)
+			return;
+		btnCirculo.setEnabled(false);
+		btnQuadrado.setEnabled(false);
+		setLadoEsq(rdbtnCurvarEsq.isSelected());
+		setDist((int) spinnerLado.getValue());
+		adicionarQuadrado();
+	}
 
-    public boolean acabouDesenho() {
-        return acabouDesenho;
-    }
+	private void handleGUIDesenhador() {
+		if (robotDesenhador == null) {
+			robotDesenhador = new RobotDesenhador(textFieldNomeRobot.getText().trim());
+			servidorDoRobot.setRobotDesenhador(robotDesenhador);
+		}
+		robotDesenhador.getGUI().setVisible(!toggleGUISpy);
+	}
 
-    public void setLadoEsq(boolean ladoEsq) {
-        this.ladoEsq = ladoEsq;
-    }
+	private void handleAtivarEspiao() {
+		guiSpy.mostrarGUI(!toggleGUISpy);
+	}
 
-    public void setDist(int dist) {
-        this.dist = dist;
-    }
+	public void acabeiDesenho() {
+		acabouDesenho = true;
+	}
 
-    public int getDist() {
-        return dist;
-    }
+	public boolean acabouDesenho() {
+		return acabouDesenho;
+	}
 
-    public Semaphore getMutex() {
-        return mutex;
-    }
+	public void setLadoEsq(boolean ladoEsq) {
+		this.ladoEsq = ladoEsq;
+	}
 
-    public void run() {	
-        for (; ; ) {
-            try {
-                if (this.endApp) {
-                    break;
-                }
+	public void setDist(int dist) {
+		this.dist = dist;
+	}
 
-                Thread.sleep(100);
-                if (clienteDoRobot != null && acabouDesenho()) {
-                    btnQuadrado.setEnabled(true);
-                    btnCirculo.setEnabled(true);
-                }
+	public int getDist() {
+		return dist;
+	}
 
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
+	public Semaphore getMutex() {
+		return mutex;
+	}
+
+	public void run() {
+		for (;;) {
+			try {
+				if (endApp)
+					break;
+
+				Thread.sleep(100);
+				if (clienteDoRobot != null && acabouDesenho()) {
+					btnQuadrado.setEnabled(true);
+					btnCirculo.setEnabled(true);
+				}
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
 }

@@ -16,6 +16,7 @@ public class ServidorDoRobot extends Thread {
 
 	public void setEnd() {
 		this.endApp = true;
+		guiServidor.dispose();
 	}
 	
 	public void setRobotDesenhador(RobotDesenhador robotDesenhador) {

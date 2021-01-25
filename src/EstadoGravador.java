@@ -1,3 +1,3 @@
 public enum EstadoGravador {
-	PARADO, GRAVAR, REPRODUZIR
+	PARADO, GRAVAR, REPRODUZIR, LER, ESCREVER
 }

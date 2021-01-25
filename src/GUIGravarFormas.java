@@ -15,6 +15,8 @@ public class GUIGravarFormas extends JFrame {
     private JTextArea txtAreaMsgGravadas;
     private JToggleButton tglBtnGravacao;
     private JButton btnReproducao;
+    private JButton btnLer;
+    private JButton btnEscrever;
 
     private GravarFormas gravador;
     private String filename = "";
@@ -31,7 +33,7 @@ public class GUIGravarFormas extends JFrame {
 
 
         tglBtnGravacao = new JToggleButton("Iniciar/Parar Grava\u00E7\u00E3o");
-        tglBtnGravacao.setBounds(150, 29, 178, 34);
+        tglBtnGravacao.setBounds(40, 30, 178, 34);
         tglBtnGravacao.addActionListener(e -> handleGravacao());
         getContentPane().add(tglBtnGravacao);
 
@@ -47,11 +49,23 @@ public class GUIGravarFormas extends JFrame {
         mensagensGravadas.setBounds(40, 148, 164, 13);
         getContentPane().add(mensagensGravadas);
         
-        btnReproducao = new JButton("Iniciar Reprodução");
+        btnReproducao = new JButton("Iniciar Reprodu\u00E7\u00E3o");
         btnReproducao.addActionListener(e -> handleReproducao());
         btnReproducao.setEnabled(false);
-        btnReproducao.setBounds(150, 85, 178, 34);
+        btnReproducao.setBounds(40, 87, 178, 34);
         getContentPane().add(btnReproducao);
+        
+        btnLer = new JButton("Ler do ficheiro");
+        btnLer.addActionListener(e -> handleLeitura());
+        btnLer.setEnabled(false);
+        btnLer.setBounds(256, 87, 178, 34);
+        getContentPane().add(btnLer);
+        
+        btnEscrever = new JButton("Escrever no ficheiro");
+        btnEscrever.addActionListener(e -> handleEscrever());
+        btnEscrever.setEnabled(false);
+        btnEscrever.setBounds(256, 30, 178, 34);
+        getContentPane().add(btnEscrever);
 
         setSize(493, 450);
 
@@ -70,10 +84,9 @@ public class GUIGravarFormas extends JFrame {
         menuFicheiro.add(menuNovo);
         setVisible(false);
         setResizable(false);
-
     }
 
-    private void myInit() {
+	private void myInit() {
         gravador = new GravarFormas(this);
         gravador.start();
         tglBtnGravacao.setEnabled(false);
@@ -86,30 +99,54 @@ public class GUIGravarFormas extends JFrame {
             filename = chooser.getSelectedFile().getAbsolutePath();
             gravador.novoFicheiro(filename);
             tglBtnGravacao.setEnabled(true);
-            btnReproducao.setEnabled(true);
+            btnReproducao.setEnabled(false);
+            btnEscrever.setEnabled(false);
+            btnLer.setEnabled(true);
         }
     }
 
     private void handleNovo() {
-        filename = JOptionPane.showInputDialog("Intruduza o nome e a extensão do ficheiro.");
+        filename = JOptionPane.showInputDialog("Introduza o nome e a extens\u00E3o do ficheiro.");
+        if (filename == null) return;
         gravador.novoFicheiro(filename);
         tglBtnGravacao.setEnabled(true);
     }
 
     private void handleGravacao() {
         if (tglBtnGravacao.isSelected()) {
-            gravador.gravar(true);
+        	gravador.setEstado(EstadoGravador.GRAVAR);
+            btnLer.setEnabled(false);
+        	btnEscrever.setEnabled(false);
+        	btnReproducao.setEnabled(false);
         } else {
-        	tglBtnGravacao.setEnabled(false);
-        	btnReproducao.setEnabled(true);
-            gravador.gravar(false);
-            gravador.setEstado(EstadoGravador.GRAVAR);
+        	gravador.setEstado(EstadoGravador.PARADO);
+        	btnEscrever.setEnabled(true);
         }
+    }
+    
+    private void handleEscrever() {
+    	gravador.setEstado(EstadoGravador.ESCREVER);
+    	tglBtnGravacao.setEnabled(false);
+    	btnEscrever.setEnabled(false);
+		btnLer.setEnabled(true);
+		btnReproducao.setEnabled(false);
+	}
+    
+    private void handleLeitura() {
+    	gravador.setEstado(EstadoGravador.LER);
+    	btnLer.setEnabled(false);     
+    	btnReproducao.setEnabled(true);
+    	btnEscrever.setEnabled(false);
+    	tglBtnGravacao.setEnabled(false);
     }
 
     private void handleReproducao() {
+    	gravador.setEstado(EstadoGravador.REPRODUZIR);
         btnReproducao.setEnabled(false);     
-        gravador.setEstado(EstadoGravador.REPRODUZIR);
+    }
+    
+    public void ligarBtnReproducao() {
+    	btnReproducao.setEnabled(true);
     }
 
     public void log(String msg) {
