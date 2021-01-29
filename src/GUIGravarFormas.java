@@ -178,6 +178,10 @@ public class GUIGravarFormas extends JFrame {
     public GravarFormas getGravador() {
         return gravador;
     }
+    
+    public void handleBotaoReproduzir(boolean ativo) {
+    	btnReproducao.setEnabled(ativo);
+    }
 
     public void mostrarGUI(boolean value) {
         setVisible(value);

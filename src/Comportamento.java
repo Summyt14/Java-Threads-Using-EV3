@@ -72,11 +72,11 @@ public abstract class Comportamento extends Thread {
 				break;
 			case ATIVO:
 				try {
-					gui.getMutex().acquire();
+					//gui.getMutex().acquire();
 					desenho();
 					if (!(this instanceof EspacarFormasGeometricas))
 						gui.acabeiDesenho();
-					gui.getMutex().release();
+					//gui.getMutex().release();
 					estado = Estado.PARADO;
 				} catch (Exception e) {
 					e.printStackTrace();

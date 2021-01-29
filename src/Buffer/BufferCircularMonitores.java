@@ -61,10 +61,6 @@ public class BufferCircularMonitores<E> extends BufferCircularBaseImpl<E> {
 		// Atualizar o número de elementos no buffer
 		this.gui.displayNumberOfItems(this.numElements.decrementAndGet());
 
-		// Verificar se existe algum produtor bloqueado
-
-		this.notifyAll();
-
 		return result;
 	}
 

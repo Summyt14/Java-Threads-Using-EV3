@@ -16,11 +16,13 @@ public class GravarFormas extends Thread {
 	private EstadoGravador estadoGravador;
 	private Semaphore smp;
 	private boolean endApp;
+	private boolean modoReproducao;
 	private RobotDesenhador robotDesenhador;
 
 	public GravarFormas(GUIGravarFormas guiGF) {
 		this.guiGF = guiGF;
 		this.endApp = false;
+		this.modoReproducao = false;
 		arrMensagens = new ArrayList<Object>();
 		estadoGravador = EstadoGravador.PARADO;
 		smp = new Semaphore(0);
@@ -33,6 +35,14 @@ public class GravarFormas extends Thread {
 	public void setEstado(EstadoGravador estado) {
 		estadoGravador = estado;
 		smp.release();
+	}
+
+	public EstadoGravador getEstado() {
+		return estadoGravador;
+	}
+
+	public boolean isModoReproducao() {
+		return modoReproducao;
 	}
 
 	public void setRobot(RobotDesenhador robotDesenhador) {
@@ -128,6 +138,10 @@ public class GravarFormas extends Thread {
 		guiGF.log("ACABOU DE REPRODUZIR!\n");
 	}
 
+	public File getFile(){
+		return file;
+	}
+
 	public void setEndApp() {
 		this.endApp = true;
 		smp.release();
@@ -156,6 +170,7 @@ public class GravarFormas extends Thread {
 				break;
 			case LER:
 				lerMensagens();
+				modoReproducao = true;
 				estadoGravador = EstadoGravador.PARADO;
 				break;
 			case REPRODUZIR:

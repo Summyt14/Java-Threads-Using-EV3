@@ -43,7 +43,7 @@ public class GUI extends JFrame implements IGUI {
 	private boolean endApp = false;
 	private boolean toggleGUISpy = false;
 	private boolean ladoEsq;
-	private boolean acabouDesenho;
+	private boolean acabouDesenho = true;
 	private IBufferCircularGUI guiBuffer;
 	private IBufferCircular<Mensagem> buffer;
 	private final static int MAX_BUFFER_SIZE = 16;
@@ -343,6 +343,9 @@ public class GUI extends JFrame implements IGUI {
 
 	public void acabeiDesenho() {
 		acabouDesenho = true;
+		if (guiSpy != null && guiSpy.getGravador().isModoReproducao())
+			guiSpy.handleBotaoReproduzir(true);
+
 	}
 
 	public boolean acabouDesenho() {
@@ -361,10 +364,6 @@ public class GUI extends JFrame implements IGUI {
 		return dist;
 	}
 
-	public Semaphore getMutex() {
-		return mutex;
-	}
-
 	public void run() {
 		for (;;) {
 			try {
@@ -372,10 +371,17 @@ public class GUI extends JFrame implements IGUI {
 					break;
 
 				Thread.sleep(100);
-				if (clienteDoRobot != null && acabouDesenho()) {
+				if (clienteDoRobot != null && acabouDesenho()
+						&& (guiSpy != null && guiSpy.getGravador().getEstado() != EstadoGravador.REPRODUZIR)) {
 					btnQuadrado.setEnabled(true);
 					btnCirculo.setEnabled(true);
+					continue;
 				}
+				
+				btnQuadrado.setEnabled(false);
+				btnCirculo.setEnabled(false);
+				if (guiSpy != null)
+					guiSpy.handleBotaoReproduzir(false);
 
 			} catch (Exception e) {
 				e.printStackTrace();
