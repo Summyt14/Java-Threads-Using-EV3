@@ -1,19 +1,8 @@
 # FSO
 
-[Word do Relatório](http://www.blankwebsite.com/)
-
 ## Indice
-* [Ideias](#ideias)
-* [Coisas a fazer](#coisas-a-fazer)
 * [Enunciado 2](#enunciado-2)
 * [Enunciado 3](#enunciado-3)
-
-## Ideias
-...
-	
-## Coisas a fazer
-* 🔳 Corrigir os sleeps
-* 🔳 Começar a implementar o Spy
 
 
 ## Enunciado 2
